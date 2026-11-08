@@ -248,6 +248,13 @@ canvas.pup{z-index:4}
 .door .lbl small{font:800 12px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--c)}
 .door .lbl b{font:900 30px/1 var(--display);text-transform:uppercase}
 .door .lbl span{font-weight:600;color:var(--muted)}
+@supports (grid-template-rows:subgrid){
+ .doors{row-gap:0}
+ .door{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:0;padding-bottom:34px;align-content:start}
+ .door .lbl{display:contents}
+ .door .lbl>small{margin-top:22px;align-self:end}
+ .door .lbl>b{margin-top:4px}.door .lbl>span{margin-top:4px;align-self:start}
+}
 .door.soon .cv{border-style:dashed;box-shadow:none;aspect-ratio:700/990;display:grid;place-items:center;color:var(--muted);background:repeating-linear-gradient(45deg,transparent 0 14px,rgba(0,0,0,.04) 14px 28px)}
 .pick{padding:100px 0;background:#fffdf6;border-top:2.5px solid #111;border-bottom:2.5px solid #111}
 .picker{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:30px}
@@ -353,6 +360,15 @@ body.menu-open .top{color:#fff}
 .bk p{margin:0 0 14px;color:var(--muted);font-weight:600;font-size:15px}
 .bk .acts{display:flex;gap:10px;flex-wrap:wrap}
 .bk .btn{font-size:14px;padding:9px 14px}
+/* карточки книг — общей сеткой: подписи, названия, строки героев и кнопки в соседних карточках стоят на одной линии */
+.bk{display:flex;flex-direction:column}.bk .lbl{flex:1;display:flex;flex-direction:column}.bk .acts{margin-top:auto}
+@supports (grid-template-rows:subgrid){
+ .bkgrid{row-gap:0}
+ .bk{display:grid;grid-row:span 5;grid-template-rows:subgrid;row-gap:0;padding-bottom:40px}
+ .bk .lbl{display:contents}
+ .bk .lbl>small{margin-top:20px;align-self:end}
+ .bk .acts{margin-top:0;align-self:start}
+}
 .empty{grid-column:1/-1;display:flex;gap:24px;align-items:center;border:2.5px dashed #111;padding:24px}
 .empty img{height:150px;width:auto}
 .ico-star{display:grid;place-items:center}.ico-star svg{width:70%;height:70%}
@@ -714,8 +730,8 @@ footer .tl a{color:#cfc8b8}
   <div class="wrap"><small>© 2026 А. Эларин, серия «Бумажный компас». Владелец сайта — А. Эларин, почта для обращений и заявлений правообладателей: <a href="mailto:elarin.books@yandex.ru">elarin.books@yandex.ru</a>.<br>Владелец сайта не собирает данные посетителей: здесь нет форм, счётчиков посещаемости и cookie. Прогресс в тренажёрах хранится только в вашем браузере.</small></div>
 </footer>
 
-<script src="mathcore.js"></script>
-<script src="app.js"></script>
-<script src="tools.js"></script>
+<script src="mathcore.js?v=0f1c917d"></script>
+<script src="app.js?v=b83ba4ed"></script>
+<script src="tools.js?v=ee04ab9d"></script>
 </body>
 </html>

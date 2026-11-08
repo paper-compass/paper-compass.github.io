@@ -199,7 +199,8 @@ Puppet.prototype.show=function(){if(this.visible)return;this.visible=true;var e=
  if(e==='left'){this.x=-.15;this.walkTo(this.hx,.45)}else if(e==='right'){this.x=1.15;this.walkTo(this.hx,.45)}
  else if(e==='fly'){this.startFly(-.2,this.hx)}else{this.oy=-.25;this.vy=0}};
 Puppet.prototype.startFly=function(from,to,o){o=o||{};var me=this;['fly','fly2','fly3'].forEach(function(k){me.want(k)});var z0=o.z0!=null?o.z0:(this.zs||1);
- this.fly={t:0,from:from,to:to,dur:o.dur||2.4,y0:o.y0||0,y1:o.y1||0,arc:o.arc==null?.35:o.arc,z0:z0,z1:o.z1!=null?o.z1:z0,sit:o.sit,hide:o.hide,face:o.face,next:o.next||null};this.face=to>from?1:to<from?-1:this.face};
+ if(o.a1)to=o.a1().x;
+ this.fly={t:0,from:from,to:to,dur:o.dur||2.4,y0:o.y0||0,y1:o.y1||0,arc:o.arc==null?.35:o.arc,z0:z0,z1:o.z1!=null?o.z1:z0,a0:o.a0,a1:o.a1,sit:o.sit,hide:o.hide,face:o.face,next:o.next||null};this.face=to>from?1:to<from?-1:this.face};
 Puppet.prototype.spin=function(){var me=this;['q','edge','back'].forEach(function(k){me.want(k)});var f=['q','edge','back','edge','q','front'],fc=[1,1,1,-1,-1,1],self=this;this.frames={list:f,faces:fc,i:0,t:0}};
 Puppet.prototype.update=function(dt,t,W,H,rect){var c=this.c;
  // лёгкое покачивание на месте (за указателем не наклоняется); при наведении — чуть крупнее
@@ -209,8 +210,9 @@ Puppet.prototype.update=function(dt,t,W,H,rect){var c=this.c;
  this.sqV+=((1-this.sq)*160-this.sqV*11)*dt;this.sq+=this.sqV*dt;
  if(this.oy<0||this.vy<0){this.vy+=4.2*dt;this.oy+=this.vy*dt;if(this.oy>=0){this.oy=0;this.vy=0;this.sq=.8;this.sqV=-1}}
  if(this.tx!==null){var dx=this.tx-this.x,st=this.speed*dt;if(Math.abs(dx)<=st){this.x=this.tx;this.tx=null;this.face=this.baseFace;this.walking=false;if(c.walk&&this.pose===c.walk)this.pose=this.basePose}else{this.x+=Math.sign(dx)*st;this.face=Math.sign(dx);this.walking=true;if(c.walk&&c.poses[c.walk])this.pose=c.cycle?c.cycle[Math.floor(t*7)%c.cycle.length]:c.walk}}
- if(this.fly){var f=this.fly;f.t+=dt;var u=Math.min(1,f.t/f.dur);this.x=lerp(f.from,f.to,ease(u));this.flyY=-(lerp(f.y0,f.y1,ease(u))+Math.sin(u*Math.PI)*f.arc);
-   this.zs=lerp(f.z0,f.z1,ease(u));this.alpha=f.hide?0:1;if(f.sit&&f.face)this.face=f.face;
+ if(this.fly){var f=this.fly;f.t+=dt;var u=Math.min(1,f.t/f.dur),e=ease(u),A0=f.a0&&f.a0(),A1=f.a1&&f.a1();
+   this.x=lerp(A0?A0.x:f.from,A1?A1.x:f.to,e);this.flyY=-(lerp(A0?A0.up:f.y0,A1?A1.up:f.y1,e)+Math.sin(u*Math.PI)*f.arc);
+   this.zs=lerp(A0?A0.z:f.z0,A1?A1.z:f.z1,e);this.alpha=f.hide?0:1;if(f.sit)this.face=(A1&&A1.f)||f.face||this.face;
    this.pose=f.sit?this.basePose:['fly','fly2','fly3','fly2'][Math.floor(f.t*11)%4];
    if(u>=1){var nx=f.next;this.fly=null;if(nx)this.startFly(this.x,nx.to,nx);else{this.flyY=0;this.zs=1;this.alpha=1;this.pose=this.basePose;this.face=this.baseFace;this.sq=.78}}}
  if(this.frames){var fr=this.frames;fr.t+=dt;if(fr.t>.085){fr.t=0;fr.i++;if(fr.i>=fr.list.length){this.frames=null;this.pose=this.basePose;this.face=this.baseFace}else{this.pose=fr.list[fr.i];this.face=this.baseFace*fr.faces[fr.i]}}}
@@ -300,12 +302,20 @@ var homeCast=innerWidth<760?
  [{id:'rumb',x:.1,h:.13},{id:'tyuk',x:.28,face:-1,h:.2},{id:'grach',x:.48,h:.3},{id:'korn',x:.68,face:-1,h:.3},{id:'gosha',x:.87,face:-1,h:.26}]:
  [{id:'rumb',x:.05,h:.2},{id:'nav',x:.12,pose:'cheer',h:.29},{id:'tyuk',x:.2,face:-1,h:.3},{id:'grach',x:.29,h:.46},{id:'miron',x:.37,face:-1,h:.4},{id:'delitel',x:.47,h:.44,pose:'door'},
   {id:'korn',x:.58,h:.45},{id:'lev',x:.66,face:-1,h:.37},{id:'maya',x:.735,h:.36},{id:'asya',x:.805,h:.36},{id:'tim',x:.875,face:-1,h:.37},{id:'gosha',x:.95,face:-1,h:.37}];
-/* верх лампы на фоне главной (картинка 1920×1080, object-fit: cover, прижата к низу) — в долях сцены */
-function lampTop(W,H){var s=Math.max(W/1920,H/1080),ox=(W-1920*s)/2,oy=H-1080*s;return {x:(ox+1600*s)/W,y:(oy+392*s)/H}}
+/* где пеликан может сесть на фоне главной: точки в пикселях bg-home.webp (1920×1080; object-fit: cover, прижат к низу) —
+   верх лампы, плечо абажура, стопка книг слева; f — куда смотрит. Пересчитываются в доли сцены каждый кадр,
+   поэтому при изменении окна пеликан остаётся на месте. Размер сидящего — в масштабе фона. */
+var PERCH=[{x:1604,y:399,f:-1},{x:1545,y:449,f:-1},{x:300,y:624,f:1}];
+function perchAt(st,ty,i){var W=st.W,H=st.H,s=Math.max(W/1920,H/1080),ox=(W-1920*s)/2,oy=H-1080*s,p=PERCH[i],y=(oy+p.y*s)/H,z=clamp(.5*s*1080/H,.4,.85),
+  ph=ty.h*H*st.k*z; /* высота картинки сидящего; ноги — на 2,7 % выше её низа (прозрачный край и белый контур) */
+ return {x:(ox+p.x*s)/W,y:y,ph:ph,up:(ty.y-y-ph*.027/H)*2,z:z,f:p.f}}
+function okPerch(st,ty,i){var P=perchAt(st,ty,i),top=($('.top')||{}).offsetHeight||64;return P.x>.07&&P.x<.93&&P.y<.62&&P.y*st.H-P.ph*.95>top+6}
+function pickPerch(st,ty){for(var i=0;i<PERCH.length;i++)if(okPerch(st,ty,i))return i;return -1}
 var home=new Stage($('#homeStage'),{fx:'embers',cast:homeCast,onFrame:function(dt,t,r){
   var cx=r.left+r.width/2,cy=r.top+r.height*.44;if(ptr.x>-1000)$('#needle').style.transform='rotate('+(Math.atan2(ptr.x-cx,-(ptr.y-cy))*180/Math.PI)+'deg)';
-  if(this._fly==null)this._fly=14;this._fly-=dt;if(this._fly<0){this._fly=48;var ty=this.pups.filter(function(p){return p.id==='tyuk'})[0];if(ty&&!ty.fly&&ty.oy>=0){var hx=ty.x,P=lampTop(this.W,this.H);
-    if(P.x>.1&&P.x<.95&&P.y>.2){var up=(.985-P.y)*2;ty.startFly(hx,P.x,{y1:up,arc:.25,dur:3,z1:.5,next:{to:P.x,y0:up,y1:up,arc:0,dur:12,sit:1,face:-1,next:{to:hx,y0:up,y1:0,arc:.25,dur:3,z1:1}}})}
+  var tf=this.pups.filter(function(p){return p.id==='tyuk'})[0];if(tf&&tf.fly&&tf.fly.sit&&tf.fly.a1&&tf.fly.a1.pi!=null&&(this._pk=(this._pk||0)+dt)>.4){this._pk=0;if(!okPerch(this,tf,tf.fly.a1.pi))tf.fly.t=tf.fly.dur}
+  if(this._fly==null)this._fly=14;this._fly-=dt;if(this._fly<0){this._fly=48;var ty=this.pups.filter(function(p){return p.id==='tyuk'})[0];if(ty&&!ty.fly&&ty.oy>=0){var hx=ty.x,st=this,pi=pickPerch(this,ty);
+    if(pi>=0){var A=function(){return perchAt(st,ty,pi)};A.pi=pi;ty.startFly(hx,0,{a1:A,arc:.25,dur:3,next:{a0:A,a1:A,arc:0,dur:12,sit:1,next:{a0:A,to:hx,y1:0,arc:.25,dur:3,z1:1}}})}
     else ty.startFly(hx,1.25,{y1:.9,arc:.1,dur:2.4,next:{to:-.25,y0:.9,y1:.9,arc:0,dur:9,hide:1,next:{to:hx,y0:.9,y1:0,arc:.1,dur:2.6}}})}}
   if(!this._spin)this._spin=9;this._spin-=dt;if(this._spin<0){this._spin=11;var ru=this.pups[0];if(ru&&ru.id==='rumb')ru.spin()}}});
 home.pups.forEach(function(p,i){p.oy=-.4-i*.05;p.vy=0});
