@@ -69,7 +69,7 @@ var BOOKS=[
  chapters:[
   {kind:'scroll',scene:'bg/bg-harbor',fg:'bg/fg-harbor',fx:'sea',cam:[[1.05,0,0],[1.22,-5,2]],title:true,blur:1.2,br:.72,
    caps:[{at:.05,t:'<b>Гавань Сборов.</b> Штурман-стажёр, тебе поручены расчёты экспедиции.'},{at:.35,t:'Перед тобой Архипелаг Сто — сто клеток моря под Туманом-Забывакой.'},{at:.62,t:'Твой наставник — Румб, компас, вырезанный из старой морской карты. Он точен и не выносит сырости. С тобой юнга Тюк, пеликан. Он торопится и часто ошибается.'}],
-   cast:[{id:'nav',x:.52,at:0,face:1},{id:'rumb',x:.33,at:.55,enter:'left'},{id:'tyuk',x:.74,at:.68,enter:'right',face:-1}],
+   cast:[{id:'nav',x:.72,at:0,face:1},{id:'rumb',x:.5,at:.55,enter:'left'},{id:'tyuk',x:.88,at:.68,enter:'right',face:-1}],
    say:[{at:.78,id:'tyuk',i:0},{at:.9,id:'rumb',i:0}]},
   {kind:'game',game:'fog',scene:'bg/bg-sea-map',fx:'sea',blur:3,br:.7,num:'Глава 2',name:'Туман-Забывака',
    cast:[{id:'rumb',x:.66,face:-1,h:.30},{id:'tyuk',x:.86,face:-1,h:.42}]},
@@ -85,7 +85,7 @@ var BOOKS=[
  chapters:[
   {kind:'scroll',scene:'bg/bg-bureau',fg:'bg/fg-bureau',fx:'dust',cam:[[1.04,0,0],[1.22,3,-2]],title:true,br:.68,blur:1.2,
    caps:[{at:.05,t:'<b>Город Делинск.</b> Подвал старой библиотеки. На двери — табличка «Бюро нерешённых дел».'},{at:.35,t:'Инспектор Грач не верит словам без доказательств. Напарник Мирон торопится с версиями. А ты — новый сотрудник.'}],
-   cast:[{id:'grach',x:.3,at:0,face:1},{id:'miron',x:.62,at:.3,enter:'right',face:-1}],
+   cast:[{id:'grach',x:.78,at:0,face:-1},{id:'miron',x:.52,at:.3,enter:'left',face:1}],
    say:[{at:.55,id:'miron',i:0},{at:.75,id:'grach',i:0}]},
   {kind:'scroll',scene:'b2-note',fx:'dust',num:'Улика',name:'Записка',cam:[[1.2,0,4],[1.45,-6,6]],br:.9,
    caps:[{at:.05,t:'Уважаемое Бюро! Поздравляю с новым сотрудником.',note:1},{at:.25,t:'Карточки сосчитаны, яблоки поделены — мило. Но это была разминка.',note:1},{at:.45,t:'Подсказка, раз уж вы так стараетесь: ИЩИ ДВОИХ.<br>— Д.',note:1},{at:.7,t:'Грач перечитывает записку дважды и молча отставляет кружку.'}],
@@ -100,7 +100,7 @@ var BOOKS=[
  chapters:[
   {kind:'scroll',scene:'bg/bg-cargo',fx:'dust',cam:[[1.05,0,0],[1.25,0,3]],title:true,blur:1.2,br:.7,
    caps:[{at:.05,t:'<b>«Борей» стоит у лунной станции</b> с открытыми люками. До старта — двое суток, и каждый ящик должен пройти через твой планшет.'},{at:.45,t:'Шестьдесят суток пути. Шестеро кадетов, один наставник — так написано в бортовом журнале.'}],
-   cast:[{id:'korn',x:.2,at:0,face:1},{id:'gosha',x:.66,at:.3,enter:'right',face:-1,pose:'boxes'}],
+   cast:[{id:'korn',x:.76,at:0,face:-1},{id:'gosha',x:.5,at:.3,enter:'left',face:1,pose:'boxes'}],
    say:[{at:.6,id:'gosha',i:0},{at:.85,id:'korn',i:0}]},
   {kind:'scroll',scene:'bg/bg-bridge',fg:'bg/fg-bridge',fx:'warp',num:'Сутки 1–9',name:'Старт',cam:[[1.22,0,0],[1.05,0,-2]],hud:1,blur:1.2,br:.72,
    caps:[{at:.05,t:'«Борей» отходит от станции. Утром Гоша пересчитывает пайки на полке лавки и хмурится: «Вчера было ровно сто».'},{at:.45,t:'В журнале появляются исправленные цифры. Люки открываются ночью. На складе тают пайки.'}],
@@ -149,9 +149,10 @@ $('#snd').addEventListener('click',function(){var o=Snd.toggle();this.setAttribu
 
 /* ================== УКАЗАТЕЛЬ ================== */
 var ptr={x:-9999,y:-9999,vx:0,vy:0,lx:0,ly:0,t:0};
-addEventListener('pointermove',function(e){ptr.vx=e.clientX-ptr.x;ptr.vy=e.clientY-ptr.y;ptr.x=e.clientX;ptr.y=e.clientY;ptr.t=performance.now()},{passive:true});
+addEventListener('pointerdown',function(e){ptr.mouse=e.pointerType==='mouse'},{passive:true});
+addEventListener('pointermove',function(e){ptr.mouse=e.pointerType==='mouse';ptr.vx=e.clientX-ptr.x;ptr.vy=e.clientY-ptr.y;ptr.x=e.clientX;ptr.y=e.clientY;ptr.t=performance.now()},{passive:true});
 var mate=$('.mate'),mx=0,my=0,mang=0;
-function mateTick(){if(ptr.x<-1000)return;mate.style.opacity=1;mx=lerp(mx,ptr.x,.25);my=lerp(my,ptr.y,.25);var sp=Math.hypot(ptr.vx,ptr.vy);if(sp>2)mang=lerp(mang,Math.atan2(ptr.vx,-ptr.vy)*180/Math.PI,.15);
+function mateTick(){if(ptr.x<-1000)return;if(!ptr.mouse){mate.style.opacity=0;return}mate.style.opacity=1;mx=lerp(mx,ptr.x,.25);my=lerp(my,ptr.y,.25);var sp=Math.hypot(ptr.vx,ptr.vy);if(sp>2)mang=lerp(mang,Math.atan2(ptr.vx,-ptr.vy)*180/Math.PI,.15);
  mate.style.transform='translate('+mx+'px,'+my+'px)';$('#mateN').setAttribute('transform','rotate('+mang+')');
  var t=document.elementFromPoint(ptr.x,ptr.y);mate.classList.toggle('big',!!(t&&t.closest&&t.closest('a,button,.door'))||hoverPup);
  mate.style.color=getComputedStyle(t&&t.closest&&t.closest('.stage')?t.closest('.stage'):document.body).color}
@@ -295,7 +296,7 @@ var storyScroll=[];
 function renderStory(b){var v=$('#v-story');v.innerHTML='';storyScroll=[];v.style.setProperty('--c',b.c);
  b.chapters.forEach(function(ch,ci){var sec=el('<section class="ch '+(ch.kind==='scroll'?'scroll':'')+'"></section>');
   var color=/^bg\//.test(ch.scene);
-  var st=el('<div class="stage'+(color?' color':'')+(ch.alert?' alert':'')+'" style="--c:'+b.c+';--sbg:'+b.d+';--br:'+(ch.br||1)+';--ta:'+(ch.ta||.9)+';--bl:'+(ch.blur||0)+'px"><div class="cam"><img src="'+IMG(ch.scene)+'" alt=""></div><div class="tint"></div><div class="shade"></div><canvas class="fx"></canvas><canvas class="pup"></canvas>'+(ch.fg?'<div class="fgw"><img src="'+IMG(ch.fg)+'" alt=""></div>':'')+'<div class="caps"></div><div class="bubbles"></div></div>');
+  var st=el('<div class="stage'+(color?' color':'')+(ch.alert?' alert':'')+(ch.hud?' has-hud':'')+(ch.title?' titling':'')+'" style="--c:'+b.c+';--sbg:'+b.d+';--br:'+(ch.br||1)+';--ta:'+(ch.ta||.9)+';--bl:'+(ch.blur||0)+'px"><div class="cam"><img src="'+IMG(ch.scene)+'" alt=""></div><div class="tint"></div><div class="shade"></div><canvas class="fx"></canvas><canvas class="pup"></canvas>'+(ch.fg?'<div class="fgw"><img src="'+IMG(ch.fg)+'" alt=""></div>':'')+'<div class="caps"></div><div class="bubbles"></div></div>');
   sec.appendChild(st);v.appendChild(sec);
   if(ch.title)st.appendChild(el('<div class="title-card"><div class="eyebrow">'+b.topic+' · '+b.grade+'</div><h1>'+words(b.title)+'</h1><div class="meta">'+b.meta.map(function(m){return '<span>'+m+'</span>'}).join('')+'</div></div>'));
   else if(ch.kind==='scroll')st.appendChild(el('<div class="chnum">'+(ch.num||'')+'<b>'+ch.name+'</b></div>'));
@@ -314,7 +315,8 @@ function scrollStory(){storyScroll.forEach(function(o){var r=o.sec.getBoundingCl
   var a=ch.cam[0],b=ch.cam[1],e=ease(p);var sc=lerp(a[0],b[0],e),tx=lerp(a[1],b[1],e),ty=lerp(a[2],b[2],e);$('.cam',o.st).style.transform='scale('+sc+') translate('+tx+'%,'+ty+'%)';
   var fw=$('.fgw',o.st);if(fw)fw.style.transform='scale('+(1+(sc-1)*1.6)+') translate('+tx*1.5+'%,'+(ty*1.5+(1-e)*1.5)+'%)';
   $$('.cap',o.st).forEach(function(c){if(p>=c._at&&c.classList.contains('wait')){c.classList.remove('wait');Snd.tick()}});
-  var tc=$('.title-card',o.st);if(tc)tc.classList.toggle('gone',p>.3);
+  if(innerWidth<761||innerHeight<521){var vis=$$('.cap:not(.wait)',o.st);vis.forEach(function(c,i){c.classList.toggle('past',i<vis.length-2)})}
+  var tc=$('.title-card',o.st);if(tc){tc.classList.toggle('gone',p>.3);o.st.classList.toggle('titling',p<=.3)}
   o.stage.pups.forEach(function(pp){if(!pp.visible&&p>=pp.enterAt)pp.show()});
   (ch.say||[]).forEach(function(s,k){if(p>=s.at&&!o.said[k]){o.said[k]=1;var pp=o.stage.pups.filter(function(x){return x.id===s.id})[0];if(pp&&pp.visible){var a=CAST[s.id].acts[s.i];var txt=s.text||(a&&a.say);if(a&&a.pose&&!s.text){pp.setPose(a.pose);pp.basePose=a.pose}pp.jump(.8);pp.say(txt)}}});
   if(ch.hud){var d=Math.round(lerp(1,9,p)),rr=Math.round(lerp(1080,891,p));var hd=$('#hd-d',o.st),hr=$('#hd-r',o.st);if(hd){hd.textContent=d;hr.textContent=rr}}

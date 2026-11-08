@@ -16,9 +16,22 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#16130f">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700;900&family=Inter:wght@400;600;800&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/roboto-condensed-cyrillic-900-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter-cyrillic-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Roboto Condensed';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/roboto-condensed-cyrillic-700-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'Roboto Condensed';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/roboto-condensed-latin-700-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Roboto Condensed';font-style:normal;font-weight:900;font-display:swap;src:url(fonts/roboto-condensed-cyrillic-900-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'Roboto Condensed';font-style:normal;font-weight:900;font-display:swap;src:url(fonts/roboto-condensed-latin-900-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/inter-cyrillic-400-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/inter-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/inter-cyrillic-600-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/inter-latin-600-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Inter';font-style:normal;font-weight:800;font-display:swap;src:url(fonts/inter-cyrillic-800-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'Inter';font-style:normal;font-weight:800;font-display:swap;src:url(fonts/inter-latin-800-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Caveat';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/caveat-cyrillic-600-normal.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'Caveat';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/caveat-latin-600-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+</style>
 <style>
 :root{
   /* мир серии: тушь и бумага; у каждой истории свой цвет — он же цвет света, перехода и кнопок */
@@ -37,7 +50,7 @@ button{font:inherit;color:inherit}
 h1,h2,h3{font-family:var(--display);font-weight:900;line-height:.9;margin:0;letter-spacing:-.015em;text-wrap:balance}
 .wrap{max-width:1240px;margin:0 auto;padding:0 24px}
 :focus-visible{outline:3px solid var(--c);outline-offset:3px}
-.eyebrow{font:800 12px/1 var(--body);letter-spacing:.18em;text-transform:uppercase}
+.eyebrow{font:800 12px/1.35 var(--body);letter-spacing:.18em;text-transform:uppercase}
 .grain{position:fixed;inset:0;pointer-events:none;z-index:95;opacity:.08;mix-blend-mode:multiply;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
@@ -52,6 +65,7 @@ h1,h2,h3{font-family:var(--display);font-weight:900;line-height:.9;margin:0;lett
 .top nav a{text-decoration:none;font-weight:700;font-size:13px;padding:8px 12px;border-radius:999px;border:1.5px solid transparent}
 .top nav a:hover,.top nav a[aria-current]{border-color:currentColor}
 .snd{appearance:none;border:1.5px solid currentColor;background:transparent;border-radius:999px;padding:7px 12px;font-weight:800;font-size:12px;letter-spacing:.08em;cursor:pointer;display:flex;gap:8px;align-items:center}
+.snd .spk{display:none;width:18px;height:18px}
 .snd i{display:flex;gap:2px;align-items:flex-end;height:12px}
 .snd i b{width:3px;height:4px;background:currentColor;transition:height .2s}
 .snd[aria-pressed="true"] i b{animation:eq .8s ease-in-out infinite}
@@ -74,7 +88,7 @@ h1,h2,h3{font-family:var(--display);font-weight:900;line-height:.9;margin:0;lett
 .mate{position:fixed;left:0;top:0;width:34px;height:34px;margin:-17px 0 0 -17px;z-index:99;pointer-events:none;transition:width .2s,height .2s,margin .2s,opacity .3s;opacity:0}
 .mate svg{width:100%;height:100%;overflow:visible}
 .mate.big{width:58px;height:58px;margin:-29px 0 0 -29px}
-@media (hover:none){.mate{display:none}}
+@media (hover:none),(pointer:coarse){.mate{display:none}}
 
 /* ---------- сцены ---------- */
 .stage{position:relative;height:100svh;min-height:620px;overflow:hidden;background:var(--sbg,#111);color:#fff;isolation:isolate}
@@ -100,7 +114,8 @@ canvas.pup{z-index:4}
 .cap.note.wait{transform:scale(.6) rotate(-8deg)}
 .title-card{position:absolute;left:0;right:0;bottom:clamp(110px,22vh,220px);z-index:5;padding:0 clamp(16px,4vw,56px);pointer-events:none;transition:opacity .4s,transform .6s}
 .title-card .eyebrow{opacity:.9;margin-bottom:12px}
-.title-card h1{font-size:clamp(54px,10.5vw,170px);text-transform:uppercase;line-height:.84;text-shadow:0 6px 40px rgba(0,0,0,.35)}
+@media (min-width:761px){.title-card{right:auto;max-width:min(64vw,980px)}}
+.title-card h1{font-size:clamp(54px,7.4vw,128px);text-transform:uppercase;line-height:.84;text-shadow:0 6px 40px rgba(0,0,0,.35)}
 .title-card h2{font-size:clamp(40px,7vw,110px);text-transform:uppercase;line-height:.86;text-shadow:0 6px 40px rgba(0,0,0,.35)}
 .title-card .w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.04em}
 .title-card .w>span{display:inline-block;animation:rise 1s cubic-bezier(.2,.9,.2,1) backwards}
@@ -112,7 +127,7 @@ canvas.pup{z-index:4}
 .bub.on{transform:translate(-50%,-100%) scale(1);opacity:1}
 .bub::after{content:"";position:absolute;left:50%;bottom:-13px;width:18px;height:18px;background:#fff;border:2.5px solid #111;border-top:0;border-left:0;transform:translateX(-50%) rotate(45deg) skew(10deg,10deg)}
 .bub small{display:block;font:900 12px var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--c);margin-bottom:2px}
-.hintline{position:absolute;right:clamp(16px,4vw,56px);bottom:22px;z-index:6;font:800 12px var(--body);letter-spacing:.14em;text-transform:uppercase;display:flex;gap:10px;align-items:center;opacity:.9}
+.hintline{position:absolute;left:clamp(16px,4vw,56px);bottom:22px;z-index:6;font:800 12px var(--body);letter-spacing:.14em;text-transform:uppercase;display:flex;gap:10px;align-items:center;opacity:.9}
 .hintline i{width:22px;height:34px;border:2px solid currentColor;border-radius:12px;position:relative}
 .hintline i::after{content:"";position:absolute;left:50%;top:6px;width:4px;height:7px;margin-left:-2px;background:currentColor;border-radius:2px;animation:scrollhint 1.6s infinite}
 .chnum{position:absolute;right:clamp(16px,4vw,56px);top:84px;z-index:6;font:900 15px var(--display);letter-spacing:.2em;text-transform:uppercase;text-align:right;opacity:.9}
@@ -434,9 +449,11 @@ body.menu-open .top{color:#fff}
 .ctl fieldset{border:0;padding:0;margin:0}.ctl legend{font-weight:800;margin-bottom:6px}
 .ctl .ck{display:flex;gap:10px;align-items:center;font-weight:700}
 .sout{width:100%;min-height:140px;font:600 14px var(--body);border:2px solid #111;padding:8px}
-.paper{perspective:1600px}
-.sheet{background:#fff;color:#111;aspect-ratio:210/297;width:100%;max-width:720px;border:1px solid #cfc8b8;box-shadow:0 30px 60px -20px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.04);padding:6% 7%;display:flex;flex-direction:column;font-size:clamp(11px,1.45vw,17px);overflow:hidden;transform-origin:50% 0}
-.sheet.flip{animation:sheetin .6s cubic-bezier(.2,.9,.2,1)}
+.paper{position:relative;max-width:794px;width:100%;overflow:hidden;transform-origin:50% 0}
+.paper.flip{animation:sheetin .6s cubic-bezier(.2,.9,.2,1)}
+.zoomhint{display:none;font-size:13px;color:var(--muted);margin:0 0 8px}
+@media (max-width:800px){.zoomhint{display:block}.paper{cursor:zoom-in}.paper.zoom{overflow:auto;cursor:zoom-out;-webkit-overflow-scrolling:touch}}
+.sheet{background:#fff;color:#111;width:794px;height:1123px;border:1px solid #cfc8b8;box-shadow:0 30px 60px -20px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.04);padding:54px 58px;display:flex;flex-direction:column;font-size:17px;overflow:hidden;transform-origin:0 0;position:absolute;left:0;top:0}
 @keyframes sheetin{from{transform:rotateX(-35deg) translateY(-20px);opacity:.2}}
 .sheet header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #111;padding-bottom:.6em}
 .sheet .sb{display:flex;align-items:center;gap:.5em;font:800 .8em var(--body);letter-spacing:.14em;text-transform:uppercase}
@@ -521,7 +538,52 @@ body.menu-open .top{color:#fff}
  #v-tool .tool-head,#v-tool .ctl{display:none!important}
  #v-tool .wrap{padding:0;max-width:none}
  .sheets{display:block}
- .sheet{border:0;box-shadow:none;max-width:none;width:100%;aspect-ratio:auto;min-height:276mm;padding:0;font-size:15px;animation:none!important}
+ .paper{height:auto!important;overflow:visible;max-width:none;animation:none!important}
+ .sheet{position:static;border:0;box-shadow:none;width:100%;height:auto;min-height:270mm;padding:0;transform:none!important}
+}
+
+/* ================== мобильная адаптация ================== */
+.trainer>*,.sheets>*,.jgrid>*{min-width:0}
+.days{display:grid;grid-template-columns:repeat(7,minmax(0,62px))}
+.days a{width:auto}
+.home-stage .hintline{display:none}
+@media (max-width:900px){.stage .hintline{display:none}}
+@media (max-width:760px){
+ .title-card{bottom:auto;top:78px}
+ .title-card h1{font-size:clamp(30px,10.5vw,64px);line-height:.9}
+ .title-card .eyebrow{font-size:11px;margin-bottom:8px}
+ .titling .caps,.titling .bubbles{opacity:0;pointer-events:none}
+ .caps{transition:opacity .3s}
+ .cap.past{display:none}
+ .cap{font-size:15px;padding:10px 13px}
+ .cap.note{font-size:22px}
+ .stage.has-hud .caps{top:112px}
+ .hud{top:62px;bottom:auto;left:0;right:0;min-width:0;display:flex;justify-content:space-between;gap:6px;padding:6px 14px;font-size:10.5px;border-width:0 0 1px;background:rgba(0,0,0,.55)}
+ .hud div{gap:5px}
+ .tool-head h1{font-size:clamp(38px,11.5vw,64px);overflow-wrap:break-word}
+ .play h2,.pick h2,.stories h2,section h2{overflow-wrap:break-word}
+ .search input{font-size:17px;padding:12px 14px}
+ .tile h3{font-size:30px}
+ .bub{max-width:min(270px,78vw)}
+}
+@media (max-height:520px) and (orientation:landscape){
+ .title-card{bottom:auto;top:66px}.title-card h1{font-size:clamp(28px,11vh,58px)}.title-card .meta{display:none}
+ .caps{top:66px}.cap{font-size:14px;padding:8px 12px}.titling .caps,.titling .bubbles{opacity:0}.cap.past{display:none}
+ .home-title{top:64px}.home-title h1{font-size:clamp(34px,13vh,72px)}.home-title p{font-size:14px;margin-top:8px}.home-title .tip{display:none}
+}
+@media (max-width:520px){
+ .snd span{display:none}
+ .snd .spk{display:block}
+ .snd{padding:6px 10px;gap:6px}
+ .brand{font-size:12px;letter-spacing:.1em}
+ .tlist li{grid-template-columns:1fr auto;row-gap:2px}
+ .tlist li span:last-child{grid-column:1/-1}
+ .days{gap:5px}
+ .days a b{font-size:22px}
+ .daily .dtext{font-size:19px}
+ .q{font-size:clamp(34px,10vw,56px)}
+ .q .inp{width:120px;font-size:34px}
+ .claim b{font-size:44px}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.rose circle,.rose line{stroke-dashoffset:0}}
 </style>
@@ -542,7 +604,7 @@ body.menu-open .top{color:#fff}
       БУМАЖНЫЙ КОМПАС
     </a>
     <nav id="nav" aria-label="Разделы"></nav>
-    <button class="snd" id="snd" type="button" aria-pressed="false"><i><b></b><b></b><b></b></i><span>Звук</span></button>
+    <button class="snd" id="snd" type="button" aria-pressed="false" aria-label="Звук"><svg class="spk" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h4l5-4v14l-5-4H3z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><i><b></b><b></b><b></b></i><span>Звук</span></button>
     <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Меню"><span></span><span></span><span></span></button>
   </div>
 </header>

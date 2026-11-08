@@ -305,25 +305,34 @@ VIEWS.sheets=function(v){var d=J.get(),o={t:d.prefs.st||'mix',n:+(d.prefs.sn||20
   '<label class="ck"><input type="checkbox" id="sa" checked> Ответы внизу листа, вверх ногами</label>'+
   '<div class="row2"><button class="btn" type="button" id="snew">Новый вариант</button><button class="btn ghost" type="button" id="sprint">Печать</button><button class="btn ghost" type="button" id="scopy">Скопировать как шифровку</button></div>'+
   '<p class="small" id="snote">Печать открывает системное окно — там же лист можно сохранить в PDF.</p><textarea id="sout" class="sout" hidden readonly></textarea></form>'+
-  '<div class="paper"><div class="sheet" id="sheet"></div></div></div></div>';
+  '<div><p class="zoomhint">Нажмите на лист, чтобы рассмотреть его в полный размер.</p><div class="paper"><div class="sheet" id="sheet"></div></div></div></div></div>';
  var sheet=$('#sheet',v),data=null;
  function build(){var w=$('#sw',v).value.trim(),wd=w?MC.cipher(w,o.t,o.seed):null;$('#sw',v).classList.toggle('bad',!!w&&!wd);
   if(w&&!wd&&o.t==='rem'){$('#snote',v).textContent='Для деления с остатком шифр не подходит — ответ состоит из двух чисел.'}
-  var items=wd?wd.items:MC.sheet(o.t,o.n,o.seed);data={items:items,wd:wd};var who=$('#sname',v).value.trim(),cols=items.length>16||o.t==='table'||o.t==='tablediv'||o.t==='mix'?3:2;if(o.t==='order'||o.t==='mul1'||o.t==='div1')cols=2;
+  var items=wd?wd.items:MC.sheet(o.t,o.n,o.seed),extra=[];
+  if(wd&&o.n>items.length){var used={};items.forEach(function(it){used[it.q]=1});extra=MC.sheet(o.t,o.n,o.seed+7).filter(function(it){return !used[it.q]}).slice(0,o.n-items.length)}
+  data={items:items,wd:wd};var all=items.concat(extra);var who=$('#sname',v).value.trim(),cols=items.length>16||o.t==='table'||o.t==='tablediv'||o.t==='mix'?3:2;if(o.t==='order'||o.t==='mul1'||o.t==='div1')cols=2;
   sheet.innerHTML='<header><div class="sb">'+STAR+'<span>Бумажный компас</span></div><div class="sl">Лист-тренажёр</div></header>'+
    '<h2>'+(wd?'Шифровка':MC.TOPICS[o.t])+'</h2>'+(wd?'<p class="sub">'+MC.TOPICS[o.t]+'. Решите примеры, найдите ответы в ключе и прочитайте слово.</p>':'')+
-   '<div class="fill"><span>Имя: <i>'+(who?esc(who):'')+'</i></span><span>Дата: <i></i></span><span>Верно: <i></i> из '+items.length+'</span></div>'+
+   '<div class="fill"><span>Имя: <i>'+(who?esc(who):'')+'</i></span><span>Дата: <i></i></span><span>Верно: <i></i> из '+all.length+'</span></div>'+
    '<ol class="ex" style="columns:'+cols+'">'+items.map(function(it){return '<li><span>'+it.q+' = </span><i></i></li>'}).join('')+'</ol>'+
-   (wd?'<div class="keyb"><div class="kt">Ключ</div><div class="keyt2">'+wd.key.map(function(k){return '<div><b>'+k[0]+'</b><span>'+k[1]+'</span></div>'}).join('')+'</div><div class="kt">Слово</div><div class="slots">'+wd.items.map(function(_,i){return '<span><small>'+(i+1)+'</small></span>'}).join('')+'</div></div>':'')+
-   (o.ans?'<div class="answers"><b>Ответы:</b> '+items.map(function(it,i){return (i+1)+') '+it.a}).join('; ')+(wd?'. Слово: '+wd.word:'')+'</div>':'')+
+   (wd?'<div class="keyb"><div class="kt">Ключ</div><div class="keyt2">'+wd.key.map(function(k){return '<div><b>'+k[0]+'</b><span>'+k[1]+'</span></div>'}).join('')+'</div><div class="kt">Слово</div><div class="slots">'+wd.items.map(function(_,i){return '<span><small>'+(i+1)+'</small></span>'}).join('')+'</div></div>'+
+    (extra.length?'<div class="kt" style="margin-top:1em">Ещё примеры</div><ol class="ex" start="'+(items.length+1)+'" style="columns:'+cols+'">'+extra.map(function(it){return '<li><span>'+it.q+' = </span><i></i></li>'}).join('')+'</ol>':''):'')+
+   (o.ans?'<div class="answers"><b>Ответы:</b> '+all.map(function(it,i){return (i+1)+') '+it.a}).join('; ')+(wd?'. Слово: '+wd.word:'')+'</div>':'')+
    '<footer>Бумажный компас · тетради-приключения по математике</footer>';
-  if(wd)award('sheet')}
+  if(wd)award('sheet');fit()}
+ /* лист всегда собирается в размере A4 (794 × 1123) и уменьшается под экран; если не влезает — мельчим шрифт */
+ function fit(){var box=$('.paper',v);if(!box||!box.isConnected)return;var fs=17;sheet.style.fontSize=fs+'px';
+  while(sheet.scrollHeight>sheet.clientHeight+1&&fs>11){fs-=.5;sheet.style.fontSize=fs+'px'}
+  var z=box.classList.contains('zoom'),k=z?1:Math.min(1,box.clientWidth/794);sheet.style.transform='scale('+k+')';box.style.height=Math.ceil(1123*k)+'px'}
+ addEventListener('resize',fit);
+ $('.paper',v).addEventListener('click',function(){if(innerWidth>800)return;this.classList.toggle('zoom');fit();this.scrollLeft=0});
  $('#st',v).onchange=function(){o.t=this.value;d.prefs.st=o.t;J.save();build()};
  onChips($('#sn',v),function(k){o.n=+k;d.prefs.sn=o.n;J.save();build()});
  $('#sw',v).addEventListener('input',function(){this.value=this.value.toUpperCase();build()});
  $('#sname',v).addEventListener('input',function(){d.prefs.name=this.value;J.save();build()});
  $('#sa',v).onchange=function(){o.ans=this.checked;build()};
- $('#snew',v).onclick=function(){o.seed=(o.seed*48271+11)%2147483647;sheet.classList.remove('flip');void sheet.offsetWidth;sheet.classList.add('flip');Snd.pop();build()};
+ $('#snew',v).onclick=function(){o.seed=(o.seed*48271+11)%2147483647;var pp=$('.paper',v);pp.classList.remove('flip');void pp.offsetWidth;pp.classList.add('flip');Snd.pop();build()};
  var printed=false;addEventListener('beforeprint',function(){printed=true});
  $('#sprint',v).onclick=function(){printed=false;try{window.print()}catch(e){}setTimeout(function(){if(!printed)$('#snote',v).textContent='Окно печати не открылось. Откройте сайт в обычной вкладке браузера — там печать работает.'},900)};
  $('#scopy',v).onclick=function(){var it=data.items,wd=data.wd,txt=(wd?'Шифровка! Реши примеры и найди ответы в ключе — получится слово.\n':'Примеры: '+MC.TOPICS[o.t]+'\n')+it.map(function(x,i){return (i+1)+') '+x.q+' = ?'}).join('\n')+(wd?'\nКлюч: '+wd.key.map(function(k){return k[0]+' — '+k[1]}).join(', '):'');
