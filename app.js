@@ -102,7 +102,7 @@ var BOOKS=[
    caps:[{at:.05,t:'<b>Грузовой «Борей» пришвартован у лунной станции.</b> Через двое суток старт, а весь груз считаешь ты — ящик за ящиком.'},{at:.45,t:'Рейс — шестьдесят суток. По журналу на борту шесть кадетов и наставник.'}],
    cast:[{id:'korn',x:.76,at:0,face:-1},{id:'gosha',x:.5,at:.3,enter:'left',face:1,pose:'boxes'}],
    say:[{at:.6,id:'gosha',i:0},{at:.85,id:'korn',i:0}]},
-  {kind:'scroll',scene:'bg/bg-bridge',fg:'bg/fg-bridge',fx:'warp',num:'Сутки 1–9',name:'Старт',cam:[[1.22,0,0],[1.05,0,-2]],hud:1,blur:1.2,br:.72,
+  {kind:'scroll',scene:'bg/bg-bridge',fg:'bg/fg-bridge',fx:'warp',num:'Сутки 1–11',name:'Старт',cam:[[1.22,0,0],[1.05,0,-2]],hud:1,blur:1.2,br:.72,
    caps:[{at:.05,t:'«Борей» уходит в рейс. Наутро Гоша считает пайки на полке и хмурится: вчера их было больше.'},{at:.45,t:'Цифры в журнале кто-то правит, ночью хлопают люки, а пайков всё меньше.'}],
    cast:[{id:'lev',x:.18,at:0,face:1,pose:'run'},{id:'maya',x:.38,at:.15,enter:'left'},{id:'asya',x:.6,at:.3,enter:'right',face:-1},{id:'tim',x:.8,at:.45,enter:'right',face:-1}],
    say:[{at:.3,id:'lev',i:0},{at:.55,id:'maya',i:0},{at:.8,id:'tim',i:0}]},
