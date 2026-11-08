@@ -290,12 +290,15 @@ footer.site small{grid-column:1/-1;color:#9b988f;border-top:1px solid #333;paddi
 @media (max-width:560px){.puz{padding:16px 14px}.puz table{width:100%;table-layout:fixed;font-size:14px}.puz th,.puz td{min-width:0;padding:6px 3px}.puz th:first-child{width:26%}}
 
 /* кнопка «Наверх»: пеликан машет крыльями, пока страница листается */
-.buddy{position:fixed;right:0;bottom:0;z-index:60;width:190px;height:270px;overflow:hidden;pointer-events:none}
-.buddy .bd{position:absolute;right:8px;bottom:14px;width:118px;padding:0;margin:0;border:0;background:none;color:#111;cursor:pointer;pointer-events:none;display:flex;flex-direction:column;align-items:center;will-change:transform;transform:translateX(170px);-webkit-tap-highlight-color:transparent}
+.buddy{position:fixed;right:0;bottom:0;z-index:60;width:190px;height:240px;overflow:hidden;pointer-events:none}
+.buddy.l{right:auto;left:0}
+.buddy .bd{position:absolute;right:8px;bottom:calc(14px + env(safe-area-inset-bottom,0px));width:118px;padding:0;margin:0;border:0;background:none;color:#111;cursor:pointer;pointer-events:none;display:flex;flex-direction:column;align-items:center;will-change:transform;transform:translateX(170px);-webkit-tap-highlight-color:transparent}
+.buddy.l .bd{right:auto;left:8px;transform:translateX(-170px)}
 .buddy.on .bd{pointer-events:auto}
+.buddy .fl{display:block;width:100%;will-change:transform}
 .buddy img{width:100%;height:auto;display:block;transition:transform .2s}
-.buddy .tag{margin-top:-6px;padding:4px 7px 3px;background:#f2ede2;border:2px solid #111;box-shadow:2px 2px 0 #111;font:800 10px/1 Inter,Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase}
+.buddy .tag{position:relative;margin-top:-6px;padding:4px 7px 3px;background:#f2ede2;border:2px solid #111;box-shadow:2px 2px 0 #111;font:800 10px/1 Inter,Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase}
 .buddy .bd:hover img{transform:scale(1.07)}
 .buddy .bd:focus-visible{outline:none}.buddy .bd:focus-visible .tag{outline:3px solid #1f5fb8;outline-offset:2px}
-@media (max-width:640px){.buddy{width:140px;height:210px}.buddy .bd{width:78px;right:4px;bottom:8px}.buddy .tag{font-size:9px;padding:3px 5px 2px;margin-top:-4px;border-width:1.5px}}
+@media (max-width:640px){.buddy{width:140px;height:190px}.buddy .bd{width:78px;right:4px;bottom:calc(10px + env(safe-area-inset-bottom,0px))}.buddy.l .bd{left:4px}.buddy .tag{font-size:9px;padding:3px 5px 2px;margin-top:-4px;border-width:1.5px}}
 @media print{.buddy{display:none!important}}

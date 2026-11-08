@@ -47,7 +47,7 @@ function poseFiles(d){d=pdef(d);return [d.src,d.blink,d.talk].filter(Boolean)}
 
 /* ================== ГЕРОИ: позы и реплики из книг ================== */
 var CAST={
- rumb:{name:'Румб',h:.27,idle:'front',poses:{front:'rumb-front',q:'rumb-34',edge:'rumb-edge',back:'rumb-back',point:'rumb-point',show:'rumb-show',doubt:'rumb-doubt',wet:'rumb-wet'},special:'spin',
+ rumb:{name:'Румб',h:.27,idle:'front',calm:1,poses:{front:'rumb-front',q:'rumb-34',edge:'rumb-edge',back:'rumb-back',point:'rumb-point',show:'rumb-show',doubt:'rumb-doubt',wet:'rumb-wet'},special:'spin',
    acts:[{pose:'point',say:'Знак × значит: по столько-то взять столько-то раз.'},{pose:'show',say:'Два моста — два удвоения. Не пропусти второй!'},{pose:'doubt',say:'Осторожно: камни-ловушки с ответами «+».'},{spin:1,say:'Строго на север!'}]},
  tyuk:{name:'Тюк',h:.40,idle:'stand',walk:'walk',poses:{stand:'tyuk-stand',walk:'tyuk-stand',fly:{src:'tyuk-fly-1',s:.86},fly2:{src:'tyuk-fly-2',s:.86},fly3:{src:'tyuk-fly-3',s:.86},proud:'tyuk-proud',sly:'tyuk-oops',slate:'tyuk-stand'},special:'fly',
    acts:[{pose:'slate',say:'Крестики-нолики с примерами? Чур, я крестики!'},{pose:'proud',say:'Вхожу с 8 бочками, выхожу с 32. Мост работает!'},{fly:1,say:'Ещё один остров — и финиш? Тогда полный вперёд!'},{pose:'sly',say:'Пишу: восемью восемь — 63. Стоп, 63 — это 7 × 9.'}]},
@@ -145,17 +145,33 @@ var Snd=(function(){var ac=null,on=false,master,amb=null,cur=null;
  function noise(sec){var b=ac.createBuffer(1,ac.sampleRate*sec,ac.sampleRate),d=b.getChannelData(0),last=0;for(var i=0;i<d.length;i++){var w=Math.random()*2-1;last=(last+.02*w)/1.02;d[i]=last*3.5}return b}
  function white(sec){var b=ac.createBuffer(1,ac.sampleRate*sec,ac.sampleRate),d=b.getChannelData(0);for(var i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b}
  function loop(buf){var s=ac.createBufferSource();s.buffer=buf;s.loop=true;s.start();return s}
+ var SB=null,SBw=[];function seaBuf(cb){if(SB!==null)return cb(SB);SBw.push(cb);if(SBw.length>1)return;
+  fetch('snd/sea.mp3').then(function(r){if(!r.ok)throw 0;return r.arrayBuffer()}).then(function(a){return new Promise(function(ok,no){var p=ac.decodeAudioData(a,ok,no);if(p&&p.then)p.then(ok,no)})})
+   .then(function(b){SB=b},function(){SB=false}).then(function(){var w=SBw;SBw=[];w.forEach(function(f){f(SB)})})}
+ function synthSea(g,nodes){/* запасной вариант, если файл не загрузился: спокойный синтезированный берег */
+     var bB=noise(8),bW=white(4);
+     var bed=loop(bB),bl=ac.createBiquadFilter();bl.type='lowpass';bl.frequency.value=420;bl.Q.value=.3;var bh=ac.createBiquadFilter();bh.type='highpass';bh.frequency.value=170;
+     var bg=ac.createGain();bg.gain.value=.2;bed.connect(bl);bl.connect(bh);bh.connect(bg);bg.connect(g);nodes.push(bed);
+     var wt=null,N=96,live=true;
+     function env(n,T,up,shape){var a=new Float32Array(n);for(var i=0;i<n;i++){var x=i/(n-1)*T;a[i]=x<up?.5-.5*Math.cos(Math.PI*x/up):Math.pow(.5+.5*Math.cos(Math.PI*Math.min(1,(x-up)/(T-up))),shape)}return a}
+     (function wave(){if(!live)return;var t=ac.currentTime+.05,up=2.6+Math.random()*1.4,dn=4.5+Math.random()*2.5,T=up+dn,pk=.75+Math.random()*.4,top=700+Math.random()*500;
+       var src=ac.createBufferSource();src.buffer=bB;src.loop=true;src.start(t,Math.random()*7);src.stop(t+T+.2);
+       var lp=ac.createBiquadFilter();lp.type='lowpass';lp.Q.value=.3;var hp=ac.createBiquadFilter();hp.type='highpass';hp.frequency.value=180;
+       var e=ac.createGain();e.gain.value=0;var pn=ac.createStereoPanner?ac.createStereoPanner():null,out=pn||g;if(pn){pn.pan.value=Math.random()*.7-.35;pn.connect(g)}
+       src.connect(hp);hp.connect(lp);lp.connect(e);e.connect(out);
+       var ge=env(N,T,up,1.7),fe=new Float32Array(N);for(var i=0;i<N;i++)fe[i]=300+top*ge[i];for(i=0;i<N;i++)ge[i]*=pk;
+       e.gain.setValueCurveAtTime(ge,t,T);lp.frequency.setValueCurveAtTime(fe,t,T);
+       var h0=t+up*.85,hT=dn*.95,hs=ac.createBufferSource();hs.buffer=bW;hs.loop=true;hs.start(h0,Math.random()*3);hs.stop(h0+hT+.2);
+       var bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1700+Math.random()*700;bp.Q.value=.6;var he=ac.createGain();he.gain.value=0;
+       hs.connect(bp);bp.connect(he);he.connect(out);var hv=env(N,hT,.9,2.2);for(i=0;i<N;i++)hv[i]*=.03*pk;he.gain.setValueCurveAtTime(hv,h0,hT);
+       wt=setTimeout(wave,(T*.72+Math.random()*1.2)*1000)})();
+     return function(){live=false;clearTimeout(wt)}}
  function build(kind){var g=ac.createGain();g.gain.value=0;g.connect(master);var nodes=[g],timer=null,kill=null;
-  if(kind==='sea'){/* прибой: волна накатывает (1,6–2,8 с) и откатывает (3–5 с), на гребне — пена; низкий гул срезан */
-    var sw=loop(noise(6)),hp=ac.createBiquadFilter();hp.type='highpass';hp.frequency.value=140;
-    var lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=450;lp.Q.value=.4;
-    var wg=ac.createGain();wg.gain.value=.12;sw.connect(hp);hp.connect(lp);lp.connect(wg);wg.connect(g);
-    var fo=loop(white(4)),fh=ac.createBiquadFilter();fh.type='highpass';fh.frequency.value=2800;var fg=ac.createGain();fg.gain.value=.0001;fo.connect(fh);fh.connect(fg);fg.connect(g);
-    var wt=null;(function wave(){var t=ac.currentTime,up=1.6+Math.random()*1.2,dn=3+Math.random()*2,pk=.5+Math.random()*.4;
-      [[wg.gain,pk,.12],[lp.frequency,1400+Math.random()*1200,420]].forEach(function(a){a[0].cancelScheduledValues(t);a[0].setValueAtTime(a[0].value,t);a[0].linearRampToValueAtTime(a[1],t+up);a[0].exponentialRampToValueAtTime(a[2],t+up+dn)});
-      fg.gain.cancelScheduledValues(t);fg.gain.setValueAtTime(Math.max(fg.gain.value,.0001),t);fg.gain.linearRampToValueAtTime(.0001,t+up*.7);fg.gain.linearRampToValueAtTime(.06*pk,t+up+.25);fg.gain.exponentialRampToValueAtTime(.0001,t+up+dn*.7);
-      wt=setTimeout(wave,(up+dn)*1000*(.8+Math.random()*.35))})();
-    kill=function(){clearTimeout(wt)};nodes.push(sw,fo)}
+  if(kind==='sea'){/* спокойный берег: запись волн (snd/sea.mp3, петля 90 с со склейкой 3 с; громкость подобрана под другие разделы, ≈ −32 LUFS на выходе).
+       Файл грузится только когда включён звук на странице с морем; если не загрузился — синтезированный вариант */
+    var sg=ac.createGain();sg.gain.value=1.48;sg.connect(g);var live=true,sk=null;
+    seaBuf(function(buf){if(!live)return;if(!buf){sk=synthSea(g,nodes);return}var src=ac.createBufferSource();src.buffer=buf;src.loop=true;src.loopStart=.5;src.loopEnd=90.5;src.connect(sg);src.start(0,.5+Math.random()*80);nodes.push(src)});
+    kill=function(){live=false;sk&&sk()}}
   if(kind==='noir'){var r=loop(white(3)),hf=ac.createBiquadFilter();hf.type='bandpass';hf.frequency.value=3000;hf.Q.value=.6;var rg=ac.createGain();rg.gain.value=.08;r.connect(hf);hf.connect(rg);rg.connect(g);
     var o=ac.createOscillator();o.type='sawtooth';o.frequency.value=55;var of=ac.createBiquadFilter();of.type='lowpass';of.frequency.value=180;var og=ac.createGain();og.gain.value=.12;o.connect(of);of.connect(og);og.connect(g);o.start();nodes.push(r,o)}
   if(kind==='space'){[48,48.4,72.2].forEach(function(fq){var o=ac.createOscillator();o.frequency.value=fq;var og=ac.createGain();og.gain.value=.12;o.connect(og);og.connect(g);o.start();nodes.push(o)});
@@ -204,7 +220,7 @@ Puppet.prototype.startFly=function(from,to,o){o=o||{};var me=this;['fly','fly2',
 Puppet.prototype.spin=function(){var me=this;['q','edge','back'].forEach(function(k){me.want(k)});var f=['q','edge','back','edge','q','front'],fc=[1,1,1,-1,-1,1],self=this;this.frames={list:f,faces:fc,i:0,t:0}};
 Puppet.prototype.update=function(dt,t,W,H,rect){var c=this.c;
  // лёгкое покачивание на месте (за указателем не наклоняется); при наведении — чуть крупнее
- var tl=Math.sin(t*.4+this.ph)*.25;
+ var tl=c.calm?0:Math.sin(t*.4+this.ph)*.25;
  var k=38,d=5.2;this.leanV+=((tl-this.lean)*k-this.leanV*d)*dt;this.lean+=this.leanV*dt;
  this.hsV+=(((this.hov?1.06:1)-this.hs)*180-this.hsV*18)*dt;this.hs+=this.hsV*dt;
  this.sqV+=((1-this.sq)*160-this.sqV*11)*dt;this.sq+=this.sqV*dt;
@@ -222,11 +238,12 @@ Puppet.prototype.box=function(W,H){var im=this.img();if(!im||!dimW(im))return nu
 Puppet.prototype.draw=function(ctx,t,W,H){if(!this.visible)return;var im=this.img();if(!im||!dimW(im))return;
  var ph=this.h*H*(this.pd().s||1)*this.st.k*(this.zs||1),pw=ph*dimW(im)/dimH(im),b=this.box(W,H);
  var bob=this.walking?-Math.abs(Math.sin(t*9))*ph*.025:0,sy=this.sq,sx=1/Math.sqrt(sy);
- ctx.save();ctx.translate(b.fx,b.fy+bob);
+ var tx0=b.fx,ty0=b.fy+bob;if(this.c.calm){var dd=this.st.d||1;tx0=Math.round(tx0*dd)/dd;ty0=Math.round(ty0*dd)/dd}
+ ctx.save();ctx.translate(tx0,ty0);
  // тень
  var air=clamp(-(this.oy+(this.flyY||0))*2,0,1);ctx.globalAlpha=.28*(1-air)*this.alpha;ctx.fillStyle='#000';ctx.beginPath();ctx.ellipse(0,-(this.oy+(this.flyY||0))*H*.5-bob,pw*.32*(1-air*.5),ph*.025,0,0,6.283);ctx.fill();
  ctx.globalAlpha=this.alpha;ctx.scale(this.face,1);
- var breath=Math.sin(t*1.9+this.ph);ctx.imageSmoothingQuality='high';
+ var breath=this.c.calm?0:Math.sin(t*1.9+this.ph);ctx.imageSmoothingQuality='high';
  ctx.rotate(this.lean*this.face*.035);ctx.scale(sx*this.hs,sy*this.hs*(1+.006*breath));
  ctx.drawImage(im,-pw/2,-ph,pw,ph);
  ctx.restore()};
@@ -462,19 +479,24 @@ $('.brand').addEventListener('click',function(e){if(!curView||curView.v!=='home'
  if(location.hash&&location.hash!=='#home'){history.replaceState(null,'','#home');curView=parseHash()}scrollTo({top:0,behavior:RM?'auto':'smooth'})});
 /* ---- пеликан-спутник: летит рядом, пока листаете, по всем разделам; нажатие — наверх ---- */
 function buddy(){var fr=['img/totop-1.webp','img/totop-2.webp','img/totop-3.webp','img/totop-2.webp'],RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
- var w=document.createElement('div');w.className='buddy';w.innerHTML='<button class="bd" type="button" aria-label="Наверх" style="visibility:hidden"><img src="'+fr[1]+'" alt="" width="250" height="227"><span class="tag">Наверх</span></button>';document.body.appendChild(w);
- var b=w.firstChild,bd=b,im=b.firstChild;fr.forEach(function(f){var x=new Image();x.src=f});
- var on=false,ox=170,oy=0,rr=0,fi=1,ft=0,sv=0,ly=scrollY,lt=0,sw=0,idle=0,last='';
+ /* на сенсорных экранах — слева: справа внизу многие мобильные браузеры показывают свою кнопку «наверх» */
+ var L=matchMedia('(pointer:coarse)').matches,sd=L?-1:1;
+ var w=document.createElement('div');w.className='buddy'+(L?' l':'');w.innerHTML='<button class="bd" type="button" aria-label="Наверх" style="visibility:hidden"><span class="fl"><img src="'+fr[1]+'" alt="" width="250" height="227"></span><span class="tag">Наверх</span></button>';document.body.appendChild(w);
+ var b=w.firstChild,fl=b.firstChild,im=fl.firstChild;fr.forEach(function(f){var x=new Image();x.src=f});
+ var on=false,ox=170,oy=0,rr=0,fi=1,ft=0,sv=0,ly=scrollY,lt=0,sw=0,idle=0,last='',lastB='';
  function C(v,a,c){return v<a?a:v>c?c:v}
  b.onclick=function(){scrollTo({top:0,behavior:RM?'auto':'smooth'});sw=1.2};
  function tick(now){var dt=lt?Math.min(.05,(now-lt)/1000):.016;lt=now;var y=scrollY;sv+=((y-ly)/dt-sv)*.12;ly=y;
   var want=y>innerHeight*.6;if(want!==on){on=want;w.classList.toggle('on',on);if(on){sw=1;b.style.visibility=''}}
   if(!on&&ox>=168&&!b.style.visibility)b.style.visibility='hidden';
   if(on||ox<168){sw=Math.max(0,sw-dt);var swp=sw>0?Math.sin((1-sw/1.4)*Math.PI):0;
-   var tx=on?-40*swp:170,ty=C(sv*.03,-40,40)-16*swp+(RM?0:Math.sin(now/700)*4),tr=C(-sv*.016,-11,11),k=RM?1:Math.min(1,dt*6);
-   ox+=(tx-ox)*k;oy+=(ty-oy)*k;rr+=(tr-rr)*k;var tf='translate('+ox.toFixed(1)+'px,'+oy.toFixed(1)+'px) rotate('+rr.toFixed(1)+'deg)';if(tf!==last){last=tf;bd.style.transform=tf}
-   var fl;if(Math.abs(sv)>70||sw>0||Math.abs(tx-ox)>16){idle=0;fl=1}else{idle+=dt;fl=idle%8>7.5}
-   ft+=dt;if(ft>.085){ft=0;var n=fl&&!RM?(fi+1)%4:1;if(n!==fi){fi=n;im.src=fr[n]}}}
+   /* пеликан поднимается над подписью, но никогда не опускается ниже места покоя — подпись не обрезается */
+   var tx=on?-36*swp:170,ty=-C(Math.abs(sv)*.025,0,28)-14*swp-(RM?0:(1+Math.sin(now/700))*3),tr=C(-sv*.016,-11,11),k=RM?1:Math.min(1,dt*6);
+   ox+=(tx-ox)*k;oy+=(ty-oy)*k;rr+=(tr-rr)*k;
+   var tb='translateX('+(ox*sd).toFixed(1)+'px)';if(tb!==lastB){lastB=tb;b.style.transform=tb}
+   var tf='translateY('+oy.toFixed(1)+'px) rotate('+(rr*sd).toFixed(1)+'deg)'+(L?' scaleX(-1)':'');if(tf!==last){last=tf;fl.style.transform=tf}
+   var fly;if(Math.abs(sv)>70||sw>0||Math.abs(tx-ox)>16){idle=0;fly=1}else{idle+=dt;fly=idle%8>7.5}
+   ft+=dt;if(ft>.085){ft=0;var n=fly&&!RM?(fi+1)%4:1;if(n!==fi){fi=n;im.src=fr[n]}}}
   requestAnimationFrame(tick)}
  requestAnimationFrame(tick)}
 buddy();

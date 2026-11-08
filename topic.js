@@ -65,19 +65,24 @@ function sheetBox(box){var MC=window.MathCore,topics=box.dataset.topics.split(',
  fit();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit)}
 
 function buddy(){var fr=['img/totop-1.webp','img/totop-2.webp','img/totop-3.webp','img/totop-2.webp'],RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
- var w=document.createElement('div');w.className='buddy';w.innerHTML='<button class="bd" type="button" aria-label="Наверх" style="visibility:hidden"><img src="'+fr[1]+'" alt="" width="250" height="227"><span class="tag">Наверх</span></button>';document.body.appendChild(w);
- var b=w.firstChild,bd=b,im=b.firstChild;fr.forEach(function(f){var x=new Image();x.src=f});
- var on=false,ox=170,oy=0,rr=0,fi=1,ft=0,sv=0,ly=scrollY,lt=0,sw=0,idle=0,last='';
+ /* на сенсорных экранах — слева: справа внизу многие мобильные браузеры показывают свою кнопку «наверх» */
+ var L=matchMedia('(pointer:coarse)').matches,sd=L?-1:1;
+ var w=document.createElement('div');w.className='buddy'+(L?' l':'');w.innerHTML='<button class="bd" type="button" aria-label="Наверх" style="visibility:hidden"><span class="fl"><img src="'+fr[1]+'" alt="" width="250" height="227"></span><span class="tag">Наверх</span></button>';document.body.appendChild(w);
+ var b=w.firstChild,fl=b.firstChild,im=fl.firstChild;fr.forEach(function(f){var x=new Image();x.src=f});
+ var on=false,ox=170,oy=0,rr=0,fi=1,ft=0,sv=0,ly=scrollY,lt=0,sw=0,idle=0,last='',lastB='';
  function C(v,a,c){return v<a?a:v>c?c:v}
  b.onclick=function(){scrollTo({top:0,behavior:RM?'auto':'smooth'});sw=1.2};
  function tick(now){var dt=lt?Math.min(.05,(now-lt)/1000):.016;lt=now;var y=scrollY;sv+=((y-ly)/dt-sv)*.12;ly=y;
   var want=y>innerHeight*.6;if(want!==on){on=want;w.classList.toggle('on',on);if(on){sw=1;b.style.visibility=''}}
   if(!on&&ox>=168&&!b.style.visibility)b.style.visibility='hidden';
   if(on||ox<168){sw=Math.max(0,sw-dt);var swp=sw>0?Math.sin((1-sw/1.4)*Math.PI):0;
-   var tx=on?-40*swp:170,ty=C(sv*.03,-40,40)-16*swp+(RM?0:Math.sin(now/700)*4),tr=C(-sv*.016,-11,11),k=RM?1:Math.min(1,dt*6);
-   ox+=(tx-ox)*k;oy+=(ty-oy)*k;rr+=(tr-rr)*k;var tf='translate('+ox.toFixed(1)+'px,'+oy.toFixed(1)+'px) rotate('+rr.toFixed(1)+'deg)';if(tf!==last){last=tf;bd.style.transform=tf}
-   var fl;if(Math.abs(sv)>70||sw>0||Math.abs(tx-ox)>16){idle=0;fl=1}else{idle+=dt;fl=idle%8>7.5}
-   ft+=dt;if(ft>.085){ft=0;var n=fl&&!RM?(fi+1)%4:1;if(n!==fi){fi=n;im.src=fr[n]}}}
+   /* пеликан поднимается над подписью, но никогда не опускается ниже места покоя — подпись не обрезается */
+   var tx=on?-36*swp:170,ty=-C(Math.abs(sv)*.025,0,28)-14*swp-(RM?0:(1+Math.sin(now/700))*3),tr=C(-sv*.016,-11,11),k=RM?1:Math.min(1,dt*6);
+   ox+=(tx-ox)*k;oy+=(ty-oy)*k;rr+=(tr-rr)*k;
+   var tb='translateX('+(ox*sd).toFixed(1)+'px)';if(tb!==lastB){lastB=tb;b.style.transform=tb}
+   var tf='translateY('+oy.toFixed(1)+'px) rotate('+(rr*sd).toFixed(1)+'deg)'+(L?' scaleX(-1)':'');if(tf!==last){last=tf;fl.style.transform=tf}
+   var fly;if(Math.abs(sv)>70||sw>0||Math.abs(tx-ox)>16){idle=0;fly=1}else{idle+=dt;fly=idle%8>7.5}
+   ft+=dt;if(ft>.085){ft=0;var n=fly&&!RM?(fi+1)%4:1;if(n!==fi){fi=n;im.src=fr[n]}}}
   requestAnimationFrame(tick)}
  requestAnimationFrame(tick)}
 function init(){$$('.example').forEach(stepper);$$('.sheetbox').forEach(sheetBox);buddy();

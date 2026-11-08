@@ -140,6 +140,13 @@ VIEWS.train=function(v,arg){var T=TRAINERS.filter(function(t){return t.id===arg}
  onChips($('#lv',v),function(k){x.level=+k;var dd=J.get();dd.prefs['lv-'+T.id]=x.level;J.save();T.run(x)});
  T.run(x);return {title:T.name,sound:b.sound}};
 
+/* Автофокус поля ответа. На компьютере — всегда. На телефоне — только если человек уже вводит ответы (клавиатура открыта):
+   нажатие кнопок режима («Умножение», «Деление»…) больше не вызывает клавиатуру. */
+var FINE=matchMedia('(hover:hover) and (pointer:fine)').matches,typing=false;
+document.addEventListener('focusin',function(e){if(e.target.classList&&e.target.classList.contains('inp'))typing=true});
+document.addEventListener('pointerdown',function(e){if(e.target.closest&&e.target.closest('.chips,.crumb,.minitiles,.top,.menu'))typing=false});
+addEventListener('hashchange',function(){typing=false});
+function af(el){if(el&&(FINE||typing))el.focus({preventScroll:true})}
 function numInput(cls,max){return '<input class="inp '+(cls||'')+'" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="'+(max||4)+'" aria-label="Ответ">'}
 function enter(inp,fn){inp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();fn()}})}
 function shake(n){n.classList.remove('shake2');void n.offsetWidth;n.classList.add('shake2')}
@@ -151,14 +158,14 @@ function trTable(x){var d=J.get(),mode=x.level,R=20,i=0,res=[],forced=null,retry
  var heat=$('#heat',x.wk);var hh='<span></span>';for(var c=1;c<=10;c++)hh+='<span>'+c+'</span>';
  for(var r=1;r<=10;r++){hh+='<span>'+r+'</span>';for(c=1;c<=10;c++)hh+='<button type="button" data-i="'+((r-1)*10+c-1)+'" aria-label="'+r+' × '+c+'"></button>'}heat.innerHTML=hh;
  function paint(){$$('button',heat).forEach(function(b){var m=d.table[+b.dataset.i];b.style.setProperty('--m',m);b.textContent=m>=3?(Math.floor(b.dataset.i/10)+1)*(b.dataset.i%10+1):''})}
- heat.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;forced=+b.dataset.i;ask()});
+ heat.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;forced=+b.dataset.i;typing=true;ask()});
  function choose(){if(forced!==null){var f=forced;forced=null;return f}if(retry.length&&retry[0].at<=i)return retry.shift().c;
   var tot=0,w=d.table.map(function(m,k){var a=Math.floor(k/10)+1,b=k%10+1,base=(a===1||b===1||a===10||b===10)?.25:1;var ww=k===last?0:Math.pow(4-m,2)*base;tot+=ww;return ww});
   var u=Math.random()*tot;for(var k=0;k<100;k++){u-=w[k];if(u<=0)return k}return 0}
  function dots(){$('#dots',x.wk).innerHTML=Array.from({length:R},function(_,k){return '<i class="'+(res[k]===true?'ok':res[k]===false?'no':k===i?'cur':'')+'"></i>'}).join('')}
  function ask(){if(i>=R)return done();cell=choose();last=cell;var a=Math.floor(cell/10)+1,b=cell%10+1,dv=mode===1||(mode===2&&Math.random()<.5);cell={k:cell,a:a,b:b,dv:dv,ans:dv?b:a*b,miss:false};
   $('#q',x.wk).innerHTML='<span>'+(dv?a*b+' : '+a:a+' × '+b)+' =</span>'+numInput('',3)+'<button class="btn" type="button">Проверить</button>';
-  $('#vd',x.wk).className='verdict';$('#vd',x.wk).textContent='';$('.hintbox',x.wk).hidden=true;var inp=$('#q input',x.wk);inp.focus({preventScroll:true});
+  $('#vd',x.wk).className='verdict';$('#vd',x.wk).textContent='';$('.hintbox',x.wk).hidden=true;var inp=$('#q input',x.wk);af(inp);
   enter(inp,check);$('#q .btn',x.wk).onclick=check;dots()}
  function check(){var inp=$('#q input',x.wk);if(inp.value==='')return;var ok=+inp.value===cell.ans,vd=$('#vd',x.wk);
   if(ok){if(!cell.miss){d.table[cell.k]=Math.min(3,d.table[cell.k]+1);res[i]=true;x.mark(true)}J.save();paint();Snd.ok();vd.className='verdict ok';vd.textContent=cell.miss?'Теперь верно. Эту клетку спросим ещё раз.':['Туман уходит!','Верно!','Клетка открыта!','Точно в цель!'][Math.floor(Math.random()*4)];
@@ -166,7 +173,7 @@ function trTable(x){var d=J.get(),mode=x.level,R=20,i=0,res=[],forced=null,retry
    if(d.table.every(function(m){return m>=3}))award('table100');i++;setTimeout(ask,cell.miss?900:650)}
   else{Snd.no();shake(inp);if(!cell.miss){cell.miss=true;res[i]=false;x.mark(false);d.table[cell.k]=0;J.save();paint();retry.push({c:cell.k,at:i+3})}
    vd.className='verdict no';vd.textContent='Не то. Впишите правильный ответ, чтобы плыть дальше.';
-   x.say('rumb',cell.dv?cell.a*cell.b+' : '+cell.a+' — ищем, сколько раз по '+cell.a+' помещается в '+cell.a*cell.b+'. '+MC.trick(cell.a,cell.b):MC.trick(cell.a,cell.b),'doubt',1);inp.value='';inp.focus({preventScroll:true})}}
+   x.say('rumb',cell.dv?cell.a*cell.b+' : '+cell.a+' — ищем, сколько раз по '+cell.a+' помещается в '+cell.a*cell.b+'. '+MC.trick(cell.a,cell.b):MC.trick(cell.a,cell.b),'doubt',1);inp.value='';af(inp)}}
  function done(){var n=res.filter(Boolean).length;dots();$('#q',x.wk).innerHTML='<div class="sum"><b>'+n+' из '+R+'</b><span>'+(n===R?'Без единой ошибки!':n>=15?'Отличный рейс.':'Туман отступает — ещё раунд?')+'</span><button class="btn" type="button">Ещё раунд</button></div>';
   $('#vd',x.wk).textContent='';x.say('tyuk',n===R?'Двадцать из двадцати! Я бы тоже так смог. Наверное.':'Раунд окончен. Карта стала светлее!','proud');
   $('#q .btn',x.wk).onclick=function(){i=0;res=[];retry=[];ask()}}
@@ -192,7 +199,7 @@ function trRem(x){var r=MC.rng(Date.now()%1e9),c=null,miss=false;
  x.wk.innerHTML='<div class="q rem" id="q"></div><div class="verdict" id="vd" aria-live="polite"></div><div class="hintbox" hidden></div><div class="row2"><button class="btn ghost" type="button" id="hint">Подсказка Грача</button></div>';
  function next(){var d=MC.rnd(r,2,9),q=x.level?MC.rnd(r,10,30):MC.rnd(r,1,9),k=MC.rnd(r,0,d-1);if(Math.random()<.85&&k===0)k=MC.rnd(r,1,d-1);c={n:d*q+k,d:d,q:q,k:k};miss=false;
   $('#q',x.wk).innerHTML='<span>'+c.n+' : '+c.d+' =</span>'+numInput('q1',2)+'<span class="ost">ост.</span>'+numInput('q2',1)+'<button class="btn" type="button">Проверить</button>';
-  var a=$('.q1',x.wk),b=$('.q2',x.wk);a.setAttribute('aria-label','Частное');b.setAttribute('aria-label','Остаток');a.focus({preventScroll:true});enter(a,function(){b.focus()});enter(b,check);$('#q .btn',x.wk).onclick=check;
+  var a=$('.q1',x.wk),b=$('.q2',x.wk);a.setAttribute('aria-label','Частное');b.setAttribute('aria-label','Остаток');af(a);enter(a,function(){b.focus()});enter(b,check);$('#q .btn',x.wk).onclick=check;
   $('#vd',x.wk).className='verdict';$('#vd',x.wk).textContent='';$('.hintbox',x.wk).hidden=true}
  function check(){var a=$('.q1',x.wk),b=$('.q2',x.wk),vd=$('#vd',x.wk);if(a.value===''||b.value==='')return;var q=+a.value,k=+b.value;
   if(q===c.q&&k===c.k){if(!miss){x.mark(true);var n=(J.get().stats.rem||{}).ok||0;if(n>=20)award('rem20')}Snd.ok();vd.className='verdict ok';vd.textContent='Верно: '+c.n+' : '+c.d+' = '+c.q+' (ост. '+c.k+'). Проверка: '+c.q+' × '+c.d+' + '+c.k+' = '+c.n+'.';
@@ -212,7 +219,7 @@ function cellsFlow(x,seq,onDone){var cur=0,mistakes=0;
    else{mistakes++;s.el.classList.add('no');Snd.no();shake(s.el);setTimeout(function(){s.el.select()},20);if(s.wrong)s.wrong()}});
   s.el.addEventListener('keydown',function(e){if(e.key==='Backspace'&&!s.el.value&&k>0){var pv=seq.slice(0,k).reverse().find(function(t){return !t.done});if(pv){e.preventDefault();pv.el.focus()}}})});
  function mark(){seq.forEach(function(s,k){s.el.classList.toggle('cur',k===cur&&!s.done)});if(x.onStep)x.onStep(cur)}
- return {start:function(){mark();seq[0]&&seq[0].el.focus({preventScroll:true})},cur:function(){return seq[cur]},mistakes:function(){return mistakes}}}
+ return {start:function(){mark();seq[0]&&af(seq[0].el)},cur:function(){return seq[cur]},mistakes:function(){return mistakes}}}
 function cellInput(ch,cls){return '<input class="c'+(cls?' '+cls:'')+'" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" aria-label="Цифра">'}
 function round1(n){var s=String(n),p=Math.pow(10,s.length-1);return Math.round(n/p)*p}
 
