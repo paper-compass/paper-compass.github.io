@@ -288,3 +288,13 @@ footer.site small{grid-column:1/-1;color:#9b988f;border-top:1px solid #333;paddi
  .printing.tcols{grid-template-columns:repeat(4,1fr)}
 }
 @media (max-width:560px){.puz{padding:16px 14px}.puz table{width:100%;table-layout:fixed;font-size:14px}.puz th,.puz td{min-width:0;padding:6px 3px}.puz th:first-child{width:26%}}
+
+/* кнопка «Наверх»: пеликан машет крыльями, пока страница листается */
+.totop{position:fixed;right:18px;bottom:18px;z-index:60;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 8px 7px;background:#f2ede2;color:#111;border:2.5px solid #111;box-shadow:4px 4px 0 #111;font:800 11px/1 Inter,Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;opacity:0;visibility:hidden;transform:translateY(16px);transition:opacity .25s,transform .25s,box-shadow .12s,visibility 0s .25s}
+.totop.on{opacity:1;visibility:visible;transform:none;transition:opacity .25s,transform .25s,box-shadow .12s,visibility 0s}
+.totop img{width:72px;height:auto;display:block}
+.totop.on:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #111}
+.totop.on:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #111}
+.totop:focus-visible{outline:3px solid #1f5fb8;outline-offset:3px}
+@media (max-width:640px){.totop{right:10px;bottom:10px;padding:3px 4px;border-width:2px;box-shadow:3px 3px 0 #111}.totop img{width:44px}.totop span{display:none}}
+@media print{.totop{display:none!important}}
