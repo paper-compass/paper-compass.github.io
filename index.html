@@ -58,7 +58,7 @@ h1,h2,h3{font-family:var(--display);font-weight:900;line-height:.9;margin:0;lett
 /* ---------- шапка ---------- */
 .top{position:fixed;left:0;right:0;top:0;z-index:70;color:var(--top,#111);transition:background .3s}
 .top .wrap{display:flex;align-items:center;gap:14px;height:60px;max-width:none}
-.top.solid{background:color-mix(in srgb,var(--topbg,#f2ede2) 86%,transparent);backdrop-filter:blur(8px)}
+.top.solid{background:color-mix(in srgb,var(--topbg,#f2ede2) 97%,transparent)}
 .brand{display:flex;align-items:center;gap:10px;font:800 13px/1 var(--body);letter-spacing:.12em;text-decoration:none}
 .brand svg{width:28px;height:28px;transition:transform .7s cubic-bezier(.2,1.4,.3,1)}
 .brand:hover svg{transform:rotate(360deg)}
@@ -86,14 +86,15 @@ h1,h2,h3{font-family:var(--display);font-weight:900;line-height:.9;margin:0;lett
 @keyframes pgopen{from{transform:rotateY(0)}to{transform:rotateY(100deg)}}
 
 /* ---------- кнопка «Наверх»: пеликан машет крыльями, пока страница листается ---------- */
-.totop{position:fixed;right:18px;bottom:18px;z-index:60;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 8px 7px;background:#f2ede2;color:#111;border:2.5px solid #111;box-shadow:4px 4px 0 #111;font:800 11px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;opacity:0;visibility:hidden;transform:translateY(16px);transition:opacity .25s,transform .25s,box-shadow .12s,visibility 0s .25s}
-.totop.on{opacity:1;visibility:visible;transform:none;transition:opacity .25s,transform .25s,box-shadow .12s,visibility 0s}
-.totop img{width:72px;height:auto;display:block}
-.totop.on:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #111}
-.totop.on:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #111}
-.totop:focus-visible{outline:3px solid #1f5fb8;outline-offset:3px}
-@media (max-width:640px){.totop{right:10px;bottom:10px;padding:3px 4px;border-width:2px;box-shadow:3px 3px 0 #111}.totop img{width:44px}.totop span{display:none}}
-@media print{.totop{display:none}}
+.buddy{position:fixed;right:0;bottom:0;z-index:60;width:190px;height:270px;overflow:hidden;pointer-events:none}
+.buddy .bd{position:absolute;right:8px;bottom:14px;width:118px;padding:0;margin:0;border:0;background:none;color:#111;cursor:pointer;pointer-events:none;display:flex;flex-direction:column;align-items:center;will-change:transform;transform:translateX(170px);-webkit-tap-highlight-color:transparent}
+.buddy.on .bd{pointer-events:auto}
+.buddy img{width:100%;height:auto;display:block;transition:transform .2s}
+.buddy .tag{margin-top:-6px;padding:4px 7px 3px;background:#f2ede2;border:2px solid #111;box-shadow:2px 2px 0 #111;font:800 10px/1 var(--body);letter-spacing:.14em;text-transform:uppercase}
+.buddy .bd:hover img{transform:scale(1.07)}
+.buddy .bd:focus-visible{outline:none}.buddy .bd:focus-visible .tag{outline:3px solid #1f5fb8;outline-offset:2px}
+@media (max-width:640px){.buddy{width:140px;height:210px}.buddy .bd{width:78px;right:4px;bottom:8px}.buddy .tag{font-size:9px;padding:3px 5px 2px;margin-top:-4px;border-width:1.5px}}
+@media print{.buddy{display:none!important}}
 /* обложка «Логики» выше остальных — показываем в тех же пропорциях, что и тетради */
 img[src$="cover-lg.webp"]{aspect-ratio:700/990;object-fit:cover;object-position:50% 0}
 
@@ -128,7 +129,7 @@ canvas.pup{z-index:4}
 .title-card .w>span{display:inline-block;animation:rise 1s cubic-bezier(.2,.9,.2,1) backwards}
 .title-card.gone{opacity:0;transform:translateY(-40px)}
 .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
-.meta span{border:2px solid currentColor;border-radius:999px;padding:6px 12px;font:800 13px var(--body);background:rgba(0,0,0,.25);backdrop-filter:blur(3px)}
+.meta span{border:2px solid currentColor;border-radius:999px;padding:6px 12px;font:800 13px var(--body);background:rgba(0,0,0,.45)}
 .bubbles{position:absolute;inset:0;z-index:7;pointer-events:none}
 .bub{position:absolute;width:max-content;max-width:270px;background:#fff;color:#111;border:2.5px solid #111;border-radius:18px;padding:10px 14px;font:700 16px/1.35 var(--body);box-shadow:4px 4px 0 rgba(0,0,0,.4);transform:translate(-50%,-100%) scale(.3);opacity:0;transition:transform .35s cubic-bezier(.2,1.6,.3,1),opacity .2s;white-space:normal}
 .bub.on{transform:translate(-50%,-100%) scale(1);opacity:1}
@@ -140,7 +141,7 @@ canvas.pup{z-index:4}
 .chnum{position:absolute;right:clamp(16px,4vw,56px);top:84px;z-index:6;font:900 15px var(--display);letter-spacing:.2em;text-transform:uppercase;text-align:right;opacity:.9}
 .chnum b{display:block;font-size:clamp(46px,6vw,84px);letter-spacing:-.02em;line-height:.9;color:transparent;-webkit-text-stroke:2px #fff}
 .alert .tint{animation:alarm 1.4s ease-in-out infinite}
-.hud{position:absolute;right:clamp(16px,4vw,56px);top:180px;z-index:6;font:800 13px/1.6 ui-monospace,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase;border:1.5px solid rgba(255,255,255,.7);padding:10px 14px;background:rgba(0,0,0,.35);backdrop-filter:blur(3px);min-width:210px}
+.hud{position:absolute;right:clamp(16px,4vw,56px);top:180px;z-index:6;font:800 13px/1.6 ui-monospace,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase;border:1.5px solid rgba(255,255,255,.7);padding:10px 14px;background:rgba(0,0,0,.6);min-width:210px}
 .hud div{display:flex;justify-content:space-between;gap:18px}
 .hud b{font-variant-numeric:tabular-nums;color:#ffd2ae}
 @media (max-width:760px){.hud{top:auto;bottom:150px;right:16px;min-width:0}.chnum{display:none}.caps{top:80px}}
