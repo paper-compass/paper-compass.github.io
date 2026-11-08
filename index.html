@@ -542,6 +542,20 @@ body.menu-open .top{color:#fff}
  .sheet{position:static;border:0;box-shadow:none;width:100%;height:auto;min-height:270mm;padding:0;transform:none!important}
 }
 
+
+/* темы для занятий */
+.topics{padding:100px 0}
+.topics h2{font-size:clamp(46px,7vw,110px);text-transform:uppercase}
+.topics .lead{max-width:36em;font-size:19px;margin:16px 0 40px}
+.topics .eyebrow{color:var(--c)}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.tgrid a{display:grid;grid-template-rows:auto 1fr auto;gap:4px;border:2.5px solid #111;background:#fffdf6;padding:16px 18px;text-decoration:none;box-shadow:5px 5px 0 #111;transition:transform .15s,box-shadow .15s;border-top:8px solid var(--c)}
+.tgrid a:hover{transform:translate(-3px,-3px);box-shadow:8px 8px 0 #111}
+.tgrid small{font:800 11px/1.3 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.tgrid b{font:900 27px/1 var(--display);text-transform:uppercase}
+.tgrid span{font-weight:800;font-size:14px;margin-top:6px}
+footer .tl{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;margin-top:16px}
+footer .tl a{color:#cfc8b8}
 /* ================== мобильная адаптация ================== */
 .trainer>*,.sheets>*,.jgrid>*{min-width:0}
 .days{display:grid;grid-template-columns:repeat(7,minmax(0,62px))}
@@ -661,6 +675,15 @@ body.menu-open .top{color:#fff}
       </div>
     </div>
   </section>
+
+  <section class="topics" id="topics">
+    <div class="wrap">
+      <div class="eyebrow">Для родителей · бесплатно</div>
+      <h2>Темы для занятий</h2>
+      <p class="lead">Объяснение по шагам, частые ошибки, лист для печати и тренажёр — по каждой теме на одной странице.</p>
+      <nav class="tgrid" aria-label="Темы"><a href="tablica-umnozheniya.html" style="--c:#1f5fb8"><small>2–3 класс · распечатать и тренажёр</small><b>Таблица умножения</b><span>Открыть →</span></a><a href="vnetablichnoe-umnozhenie.html" style="--c:#c8281e"><small>3 класс · 23 × 4, 78 : 3</small><b>Внетабличное умножение</b><span>Открыть →</span></a><a href="delenie-s-ostatkom.html" style="--c:#c8281e"><small>3 класс · схема и примеры</small><b>Деление с остатком</b><span>Открыть →</span></a><a href="umnozhenie-stolbikom.html" style="--c:#e26812"><small>3–4 класс · на одно- и двузначное</small><b>Умножение столбиком</b><span>Открыть →</span></a><a href="delenie-stolbikom.html" style="--c:#e26812"><small>3–4 класс · уголком, нули в частном</small><b>Деление столбиком</b><span>Открыть →</span></a><a href="delenie-na-dvuznachnoe.html" style="--c:#e26812"><small>4 класс · подбор цифры частного</small><b>Деление на двузначное</b><span>Открыть →</span></a><a href="poryadok-dejstvij.html" style="--c:#e26812"><small>2–4 класс · скобки и правила</small><b>Порядок действий</b><span>Открыть →</span></a><a href="primery-3-klass.html" style="--c:#c8281e"><small>листы для печати</small><b>Примеры для 3 класса</b><span>Открыть →</span></a><a href="primery-4-klass.html" style="--c:#e26812"><small>листы для печати</small><b>Примеры для 4 класса</b><span>Открыть →</span></a><a href="logicheskie-zadachi.html" style="--c:#d6232a"><small>от 9 лет · с ответами</small><b>Логические задачи</b><span>Открыть →</span></a></nav>
+    </div>
+  </section>
 </main>
 
 <!-- ======================= ИСТОРИЯ ======================= -->
@@ -674,6 +697,7 @@ body.menu-open .top{color:#fff}
     <div>
       <h3>Бумажный компас</h3>
       <p style="max-width:34em;margin:0">Тетради для печати на домашнем чёрно-белом принтере. Купить можно на Литрес. Бесплатно — <a href="#train">тренажёры</a>, <a href="#daily">задача дня</a> и <a href="#sheets">листы для печати</a>.</p>
+      <nav class="tl" aria-label="Темы"><a href="tablica-umnozheniya.html">Таблица умножения</a><a href="vnetablichnoe-umnozhenie.html">Внетабличное умножение</a><a href="delenie-s-ostatkom.html">Деление с остатком</a><a href="umnozhenie-stolbikom.html">Умножение столбиком</a><a href="delenie-stolbikom.html">Деление столбиком</a><a href="delenie-na-dvuznachnoe.html">Деление на двузначное</a><a href="poryadok-dejstvij.html">Порядок действий</a><a href="primery-3-klass.html">Примеры для 3 класса</a><a href="primery-4-klass.html">Примеры для 4 класса</a><a href="logicheskie-zadachi.html">Логические задачи</a></nav>
     </div>
     <div>
       <p style="margin:0 0 10px"><a href="https://www.litres.ru/author/a-elarin-34117204/">Все книги на Литрес</a></p>

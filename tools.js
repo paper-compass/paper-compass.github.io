@@ -50,7 +50,7 @@ function toast(b){var t=el('<div class="toast" role="status" style="--c:'+b.c+'"
 function navCount(){var n=Object.keys(J.get().badges).length,e=$('#nbBadges');if(e){e.textContent=n||'';e.hidden=!n}}
 
 /* ================== ШАПКА: разделы вместо списка книг ================== */
-var SECTIONS=[{k:'library',t:'Истории'},{k:'train',t:'Тренажёры'},{k:'sheets',t:'Листы'},{k:'daily',t:'Задача дня'},{k:'journal',t:'Журнал'}];
+var SECTIONS=[{k:'library',t:'Истории'},{k:'train',t:'Тренажёры'},{k:'sheets',t:'Листы'},{k:'topics',t:'Темы'},{k:'daily',t:'Задача дня'},{k:'journal',t:'Журнал'}];
 function cover(b,cls){return '<img'+(cls?' class="'+cls+'"':'')+' src="'+IMG(b.cover)+'" alt="Обложка: '+esc(b.title)+'" width="700" height="990" loading="lazy">'}
 (function(){var nav=$('#nav');
  nav.innerHTML=SECTIONS.map(function(s){
@@ -294,8 +294,8 @@ function trQueue(x){var n=x.level+3;
  $('#skip',x.wk).onclick=next;next()}
 
 /* ================== ЛИСТЫ ДЛЯ ПЕЧАТИ И ШИФРОВКИ ================== */
-var SHEET_T=['table','tablediv','mix','out2','outdiv','rem','mul1','div1','order'];
-VIEWS.sheets=function(v){var d=J.get(),o={t:d.prefs.st||'mix',n:+(d.prefs.sn||20),w:'',who:d.prefs.name||'',seed:Date.now()%1e9,ans:true};
+var SHEET_T=['table','tablediv','mix','out2','outdiv','rem','mul1','mul2','div1','div2','round','order','g3','g4'];
+VIEWS.sheets=function(v,arg){var d=J.get(),o={t:arg&&SHEET_T.indexOf(arg)>=0?arg:SHEET_T.indexOf(d.prefs.st)>=0?d.prefs.st:'mix',n:+(d.prefs.sn||20),w:'',who:d.prefs.name||'',seed:Date.now()%1e9,ans:true};
  v.innerHTML='<div class="wrap">'+head('Для печати и для друзей','Листы','Соберите лист примеров за секунду: тема, количество, секретное слово. Каждое нажатие «Новый вариант» даёт новые примеры.')+
   '<div class="sheets"><form class="ctl" id="ctl" onsubmit="return false">'+
   '<label>Тема<select id="st">'+SHEET_T.map(function(k){return '<option value="'+k+'"'+(k===o.t?' selected':'')+'>'+MC.TOPICS[k]+'</option>'}).join('')+'</select></label>'+
@@ -311,7 +311,7 @@ VIEWS.sheets=function(v){var d=J.get(),o={t:d.prefs.st||'mix',n:+(d.prefs.sn||20
   if(w&&!wd&&o.t==='rem'){$('#snote',v).textContent='Для деления с остатком шифр не подходит — ответ состоит из двух чисел.'}
   var items=wd?wd.items:MC.sheet(o.t,o.n,o.seed),extra=[];
   if(wd&&o.n>items.length){var used={};items.forEach(function(it){used[it.q]=1});extra=MC.sheet(o.t,o.n,o.seed+7).filter(function(it){return !used[it.q]}).slice(0,o.n-items.length)}
-  data={items:items,wd:wd};var all=items.concat(extra);var who=$('#sname',v).value.trim(),cols=items.length>16||o.t==='table'||o.t==='tablediv'||o.t==='mix'?3:2;if(o.t==='order'||o.t==='mul1'||o.t==='div1')cols=2;
+  data={items:items,wd:wd};var all=items.concat(extra);var who=$('#sname',v).value.trim(),cols=items.length>16||o.t==='table'||o.t==='tablediv'||o.t==='mix'?3:2;if(['order','mul1','mul2','div1','div2','round','g3','g4'].indexOf(o.t)>=0)cols=2;
   sheet.innerHTML='<header><div class="sb">'+STAR+'<span>Бумажный компас</span></div><div class="sl">Лист-тренажёр</div></header>'+
    '<h2>'+(wd?'Шифровка':MC.TOPICS[o.t])+'</h2>'+(wd?'<p class="sub">'+MC.TOPICS[o.t]+'. Решите примеры, найдите ответы в ключе и прочитайте слово.</p>':'')+
    '<div class="fill"><span>Имя: <i>'+(who?esc(who):'')+'</i></span><span>Дата: <i></i></span><span>Верно: <i></i> из '+all.length+'</span></div>'+

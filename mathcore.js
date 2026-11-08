@@ -52,7 +52,24 @@ var GEN={
  rem:function(r){var b=rnd(r,3,9),q=rnd(r,2,9),k=rnd(r,1,b-1);return {q:(b*q+k)+' : '+b,a:q+' ост. '+k,ans:[q,k]}},
  mul1:function(r){var a=rnd(r,112,4987),b=rnd(r,3,9);return {q:a+' × '+b,a:a*b}},
  div1:function(r){var b=rnd(r,3,9),q=rnd(r,104,2999);return {q:b*q+' : '+b,a:q}},
- order:function(r){var d=rnd(r,3,9),q=rnd(r,6,30),a=rnd(r,2,9),b=rnd(r,11,40);return {q:d*q+' : '+d+' + '+a+' × '+b,a:q+a*b}}
+ mul2:function(r){var a=rnd(r,112,989),b;do{b=rnd(r,12,98)}while(b%10===0||b%11===0);return {q:a+' × '+b,a:a*b}},
+ div2:function(r){var b;do{b=rnd(r,12,89)}while(b%10===0);var q=rnd(r,12,Math.min(299,Math.floor(29999/b)));return {q:b*q+' : '+b,a:q}},
+ round:function(r){var t=rnd(r,0,3);
+  if(t===0){var a=rnd(r,12,99)*10,b=rnd(r,2,9)*10;return {q:a+' × '+b,a:a*b}}
+  if(t===1){var d=rnd(r,2,9),q=rnd(r,12,99),m=pick(r,[10,100]);return {q:d*q*m+' : '+d*m,a:q}}
+  if(t===2){var a2=rnd(r,13,97),k=pick(r,[10,100,1000]);return {q:a2*k+' : '+k,a:a2}}
+  var a3=rnd(r,2,9)*100,b3=rnd(r,2,9)*10;return {q:a3+' × '+b3,a:a3*b3}},
+ order:function(r){var t=rnd(r,0,8),a,b,c,d,q;
+  switch(t){
+  case 0:b=rnd(r,2,9);c=rnd(r,2,9);a=rnd(r,11,80);return {q:a+' + '+b+' × '+c,a:a+b*c};
+  case 1:b=rnd(r,2,9);c=rnd(r,2,9);a=b*c+rnd(r,3,60);return {q:a+' − '+b+' × '+c,a:a-b*c};
+  case 2:a=rnd(r,11,40);b=rnd(r,2,30);c=rnd(r,2,6);return {q:'('+a+' + '+b+') × '+c,a:(a+b)*c};
+  case 3:c=rnd(r,2,9);q=rnd(r,2,12);b=rnd(r,5,40);a=c*q+b;return {q:'('+a+' − '+b+') : '+c,a:q};
+  case 4:a=rnd(r,3,9);b=rnd(r,6,12);d=rnd(r,2,9);q=rnd(r,2,9);c=d*q;return {q:a+' × '+b+' − '+c+' : '+d,a:a*b-q};
+  case 5:d=rnd(r,3,9);q=rnd(r,6,30);a=rnd(r,2,9);b=rnd(r,11,40);return {q:d*q+' : '+d+' + '+a+' × '+b,a:q+a*b};
+  case 6:c=rnd(r,2,9);q=rnd(r,3,15);var s1=c*q;a=rnd(r,1,s1-1);b=s1-a;d=rnd(r,2,6);return {q:'('+a+' + '+b+') : '+c+' × '+d,a:q*d};
+  case 7:a=rnd(r,2,9);c=rnd(r,2,20);b=c+rnd(r,2,12);d=rnd(r,5,60);return {q:a+' × ('+b+' − '+c+') + '+d,a:a*(b-c)+d};
+  default:c=rnd(r,2,9);d=rnd(r,2,6);b=rnd(r,5,30);a=(b+c)*d+rnd(r,10,90);return {q:a+' − ('+b+' + '+c+') × '+d,a:a-(b+c)*d}}}
 };
 
 /* ===== русские окончания ===== */
@@ -191,16 +208,27 @@ var DAILY=[
 function daily(di){var r=rng(di*7919+104729);r();r();var k=((di%7)+7)%7;return DAILY[k](r)}
 
 /* ===== листы и шифровки ===== */
-var TOPICS={table:'Таблица умножения',tablediv:'Табличное деление',mix:'Таблица: умножение и деление',out2:'Внетабличное умножение',outdiv:'Внетабличное деление',rem:'Деление с остатком',mul1:'Умножение столбиком',div1:'Деление уголком',order:'Порядок действий'};
+var TOPICS={table:'Таблица умножения',tablediv:'Табличное деление',mix:'Таблица: умножение и деление',out2:'Внетабличное умножение',outdiv:'Внетабличное деление',rem:'Деление с остатком',mul1:'Умножение столбиком',mul2:'Умножение на двузначное',div1:'Деление уголком',div2:'Деление на двузначное',round:'Круглые числа',order:'Порядок действий',g3:'Примеры: 3 класс',g4:'Примеры: 4 класс'};
 GEN.mix=function(r){return r()<.5?GEN.table(r):GEN.tablediv(r)};
+function mixOf(parts){return function(r){var x=r(),acc=0;for(var i=0;i<parts.length;i++){acc+=parts[i][1];if(x<acc||i===parts.length-1)return GEN[parts[i][0]](r)}}}
+GEN.g3=mixOf([['table',.25],['tablediv',.2],['out2',.2],['outdiv',.2],['order',.15]]);
+GEN.g4=mixOf([['mul1',.2],['div1',.2],['mul2',.15],['div2',.15],['round',.15],['order',.15]]);
 function sheet(topic,count,seed){var r=rng(seed),seen={},out=[],g=GEN[topic];for(var t=0;out.length<count&&t<count*60;t++){var x=g(r);if(seen[x.q])continue;seen[x.q]=1;out.push(x)}return out}
 var ABC='АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЭЮЯ';
+/* другие примеры с тем же ответом — для повторной буквы в шифровке */
+function altQ(q,v,r,topic){var out=[],m=/^(\d+) × (\d+)$/.exec(q);if(m)out.push(m[2]+' × '+m[1]);
+ if(typeof v!=='number')return out;
+ if(topic==='table'||topic==='tablediv'||topic==='mix'||topic==='g3'){for(var a=2;a<=9;a++){if(v%a===0&&v/a>=2&&v/a<=9)out.push(a+' × '+v/a);if(v<=9&&topic!=='table')out.push(v*a+' : '+a)}if(topic!=='g3')return out}
+ m=/^(\d+) : (\d+)$/.exec(q);if(m&&(topic==='round'||topic==='g4'))out.push((+m[1]*10)+' : '+(+m[2]*10));
+ for(var t=0;t<12&&v>=4;t++){var d=rnd(r,2,9),c=rnd(r,1,Math.max(1,Math.floor(v/d)));if(c*d<v)out.push(c+' × '+d+' + '+(v-c*d))}
+ return out}
 function cipher(word,topic,seed){var r=rng(seed),g=GEN[topic],W=word.toUpperCase().replace(/Ё/g,'Е').replace(/[^А-Я]/g,'').slice(0,14);if(!W||topic==='rem')return null;
  var val={},vq={},used={},seen={},items=[];
- W.split('').forEach(function(ch){if(val[ch]!==undefined)return;for(var t=0;t<400;t++){var x=g(r);if(used[x.a]||seen[x.q])continue;val[ch]=x.a;vq[ch]=x.q;used[x.a]=ch;seen[x.q]=1;break}});
+ W.split('').forEach(function(ch){if(val[ch]!==undefined)return;var occ=W.split(ch).length-1;for(var t=0;t<400;t++){var x=g(r);if(used[x.a]||seen[x.q])continue;if(occ>1&&t<300&&new Set(altQ(x.q,x.a,r,topic).concat([x.q])).size<occ)continue;val[ch]=x.a;vq[ch]=x.q;used[x.a]=ch;seen[x.q]=1;break}});
  if(Object.keys(val).length!==new Set(W.split('')).size)return null;
  var first={};W.split('').forEach(function(ch){var it=null;if(!first[ch]){first[ch]=1;it={q:vq[ch]}}else{for(var t=0;t<300;t++){var x=g(r);if(x.a===val[ch]&&!seen[x.q]){it=x;seen[x.q]=1;break}}}
-  if(!it&&(topic==='div1'||topic==='outdiv'||topic==='tablediv')){var q0=val[ch];for(t=0;t<60&&!it;t++){var dd=rnd(r,2,9),qq=dd*q0+' : '+dd;if(!seen[qq]&&(topic!=='tablediv'||q0<=9)&&(topic!=='outdiv'||dd*q0<100)){it={q:qq};seen[qq]=1}}}
+  if(!it&&(topic==='div1'||topic==='div2'||topic==='outdiv'||topic==='tablediv')){var q0=val[ch];for(t=0;t<60&&!it;t++){var dd=topic==='div2'?rnd(r,12,48):rnd(r,2,9),qq=dd*q0+' : '+dd;if(!seen[qq]&&(topic!=='tablediv'||q0<=9)&&(topic!=='outdiv'||dd*q0<100)){it={q:qq};seen[qq]=1}}}
+  if(!it){var al=altQ(vq[ch],val[ch],r,topic).filter(function(z){return !seen[z]})[0];if(al){it={q:al};seen[al]=1}}
   if(!it)it={q:vq[ch]};
   items.push({q:it?it.q:'',a:val[ch],ch:ch})});
  var key=Object.keys(val).map(function(ch){return [val[ch],ch]}),other=ABC.split('').filter(function(c){return W.indexOf(c)<0});

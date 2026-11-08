@@ -95,7 +95,7 @@ var BOOKS=[
    cast:[{id:'delitel',x:.2,h:.6}]}
  ]},
 {id:'borey',short:'Самозванец на борту',title:'Самозванец на борту',topic:'Умножение и деление столбиком',grade:'4 класс',grades:[4],needs:['col','div2'],c:'#e26812',d:'#0b0a10',
- cover:'cover-b3',pop:'lev-point',url:AUTHOR,meta:['4 класс','60 вахт по 20 минут','9–11 лет'],sound:'space',
+ cover:'cover-b3',pop:'lev-point',url:'https://www.litres.ru/book/a-elarin-34117204/umnozhenie-i-delenie-stolbikom-samozvanets-na-bortu-74718994/',meta:['4 класс','60 вахт по 20 минут','9–11 лет'],sound:'space',
  facts:['Столбик и уголок на одно- и двузначное, нули в частном, остаток','Радиограммы, кодовые замки, аварийные вахты с контрольной суммой','Задачи на движение и порядок действий','Ответы на отрезной полоске и в конце'],
  chapters:[
   {kind:'scroll',scene:'bg/bg-cargo',fx:'dust',cam:[[1.05,0,0],[1.25,0,3]],title:true,blur:1.2,br:.7,
@@ -110,7 +110,7 @@ var BOOKS=[
    cast:[{id:'korn',x:.08,face:1,h:.6},{id:'gosha',x:.22,face:1,h:.5},{id:'lev',x:.36,face:1,h:.5,pose:'point'}]}
  ]},
 {id:'logic',short:'Логика тихого города',title:'Логика тихого города',topic:'100 логических задач',grade:'12+',grades:[5],needs:['hard'],c:'#d6232a',d:'#111',
- cover:'cover-lg',pop:null,url:AUTHOR,meta:['от 12 лет и взрослым','100 задач','подсказки и решения'],sound:'clock',light:1,
+ cover:'cover-lg',pop:null,url:'https://www.litres.ru/book/a-elarin-34117204/logika-tikhogo-goroda-74690314/',meta:['от 12 лет и взрослым','100 задач','подсказки и решения'],sound:'clock',light:1,
  facts:['100 задач с подсказками и подробными решениями','Логика, числа, геометрия, вероятность, стратегия','От быстрых разминок до задач на целый вечер','Для подростков от 12 лет и взрослых'],
  chapters:[
   {kind:'scroll',scene:'lg-map',fx:'beam',cam:[[1.1,0,6],[1.6,-4,-8]],title:true,ta:.55,
