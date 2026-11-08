@@ -31,33 +31,33 @@ var CAST={
  rumb:{name:'Румб',h:.27,idle:'front',poses:{front:'rumb-front',q:'rumb-34',edge:'rumb-edge',back:'rumb-back',point:'rumb-point',show:'rumb-show',doubt:'rumb-doubt',wet:'rumb-wet'},special:'spin',
    acts:[{pose:'point',say:'Знак × значит: по столько-то взять столько-то раз.'},{pose:'show',say:'Два моста — два удвоения. Не пропусти второй!'},{pose:'doubt',say:'Осторожно: камни-ловушки с ответами «+».'},{spin:1,say:'Строго на север!'}]},
  tyuk:{name:'Тюк',h:.40,idle:'stand',walk:'walk',poses:{stand:'tyuk-stand',walk:'tyuk-stand',fly:{src:'tyuk-fly-1',s:.86},fly2:{src:'tyuk-fly-2',s:.86},fly3:{src:'tyuk-fly-3',s:.86},proud:'tyuk-proud',sly:'tyuk-oops',slate:'tyuk-stand'},special:'fly',
-   acts:[{pose:'slate',say:'Крестики-нолики с примерами? Чур, я крестики!'},{pose:'proud',say:'Вхожу с 8 бочками, выхожу с 32. Мост работает!'},{fly:1,say:'Последний переход. А можно побыстрее?'},{pose:'sly',say:'Пишу: восемью восемь — 63. Стоп, 63 — это 7 × 9.'}]},
+   acts:[{pose:'slate',say:'Крестики-нолики с примерами? Чур, я крестики!'},{pose:'proud',say:'Вхожу с 8 бочками, выхожу с 32. Мост работает!'},{fly:1,say:'Ещё один остров — и финиш? Тогда полный вперёд!'},{pose:'sly',say:'Пишу: восемью восемь — 63. Стоп, 63 — это 7 × 9.'}]},
  nav:{name:'Штурман',h:.40,idle:'back',walk:'walk',poses:{back:'nav-back',walk:'nav-walk',point:'nav-point',cheer:'nav-cheer',map:'nav-map',sit:'nav-sit'},
-   acts:[{pose:'map',say:'Это ты: штурман-стажёр. Расчёты экспедиции — твои.'},{pose:'point',say:'Отдать швартовы!'},{pose:'cheer',say:'Туман уходит с клетки, когда в неё вписан верный ответ.'}]},
+   acts:[{pose:'map',say:'Это ты: штурман-стажёр. Расчёты экспедиции — твои.'},{pose:'point',say:'Отдать швартовы!'},{pose:'cheer',say:'Верный ответ — и над клеткой снова чистое море.'}]},
  grach:{name:'Грач',h:.66,idle:'stand',poses:{stand:'grach-stand',lens:'grach-lens',mug:'grach-mug'},
-   acts:[{pose:'lens',say:'Тихо. Сколько яблок? Шестьдесят. Сколько вас? Трое. Делим.'},{pose:'stand',say:'Делится. Тридцать на троих и двенадцать на троих. По частям.'}]},
+   acts:[{pose:'lens',say:'Без суеты. Яблок шестьдесят, нас трое — значит, делим на три.'},{pose:'stand',say:'Сорок два разбей на тридцать и двенадцать. Каждое делится на три.'}]},
  miron:{name:'Мирон',h:.58,idle:'point',walk:'run',poses:{point:'miron-point',run:'miron-point',think:'miron-think',book:'miron-book'},
-   acts:[{pose:'run',say:'Пачки по десять? Тут и считать нечего! Двадцать на три — это двадцать три!'},{pose:'think',say:'Двоих… Двух воров? Две улики? Двух…'}]},
+   acts:[{pose:'run',say:'Двадцать умножить на три? Легко: двадцать три! …Ой. Погодите.'},{pose:'think',say:'Их двое? Два подозреваемых? Или две подсказки?'}]},
  delitel:{name:'Делитель',h:.66,idle:'door',walk:'walk',cycle:['w1','w2','w3','w4'],poses:{walk:'delitel-walk',door:'delitel-door',w1:'delitel-walk-1',w2:'delitel-walk-2',w3:'delitel-walk-3',w4:'delitel-walk-4'},dark:true,
-   acts:[{say:'Делить поровну умеют все. Делить честно — единицы. — Д.'}]},
+   acts:[{say:'Поровну делить нетрудно. Честно — вот это редкость. — Д.'}]},
  korn:{name:'Корн',h:.64,idle:'stand',poses:{stand:'korn-stand',read:'korn-read',mug:'korn-mug'},
-   acts:[{pose:'read',say:'Сначала прикинь. Потом считай. Потом проверь.'},{pose:'stand',say:'Ноль. Он тоже цифра. Его не пропускают.'},{pose:'mug',say:'Пять в уме. Ум для того и выдан.'}]},
+   acts:[{pose:'read',say:'Прикидка, расчёт, проверка. Порядок не меняем.'},{pose:'stand',say:'Ноль в частном — полноправная цифра. Потеряешь его — ответ развалится.'},{pose:'mug',say:'Держи пятёрку в голове. Голова для этого и нужна.'}]},
  lev:{name:'Лев',h:.52,idle:'point',walk:'run',poses:{point:'lev-point',run:'lev-run'},
-   acts:[{pose:'run',say:'Делю 816 на 8, получаю 12. Быстро же?'},{pose:'point',say:'Скорость знаю, время знаю. А расстояние — это на глаз.'}]},
+   acts:[{pose:'run',say:'Восемьсот шестнадцать на восемь — двенадцать! Я молния?'},{pose:'point',say:'Летим столько-то, со скоростью такой-то… Расстояние угадаю.'}]},
  maya:{name:'Майя',h:.52,idle:'phones',poses:{phones:'maya-phones',write:'maya-write'},
-   acts:[{pose:'write',say:'Делю 52 на 5. А два на пять не делится. Что писать?'},{pose:'phones',say:'Связь с «Церерой-4» — через сорок минут.'}]},
+   acts:[{pose:'write',say:'Пятьдесят два на пять. Пятёрку разделила, осталась двойка — и дальше что?'},{pose:'phones',say:'Связь с «Церерой-4» — через сорок минут.'}]},
  tim:{name:'Тим',h:.54,idle:'box',poses:{box:'tim-box',think:'tim-think'},
-   acts:[{pose:'think',say:'4920 на 60. Я бы сказал — штук восемьдесят, плюс-минус.'},{pose:'box',say:'Насос в порядке. Это я проверил.'}]},
+   acts:[{pose:'think',say:'Четыре тысячи девятьсот двадцать на шестьдесят… Около восьмидесяти. Сойдёт?'},{pose:'box',say:'Насос в порядке. Это я проверил.'}]},
  asya:{name:'Ася',h:.52,idle:'tray',poses:{tray:'asya-tray',water:'asya-water',think:'asya-think'},
-   acts:[{pose:'water',say:'Тридцать лотков по сорок ростков. Это же надо столбик рисовать.'},{pose:'think',say:'Ростки кто-то трогал ночью.'}]},
+   acts:[{pose:'water',say:'В каждом из тридцати лотков по сорок ростков. Опять столбиком?'},{pose:'think',say:'Ростки кто-то трогал ночью.'}]},
  gosha:{name:'Гоша',h:.53,idle:'thumb',poses:{thumb:'gosha-thumb',shrug:'gosha-shrug',boxes:'gosha-boxes'},
-   acts:[{pose:'boxes',say:'Сто ящиков по десять пайков. Я до утра буду складывать.'},{pose:'shrug',say:'Семь на восемь — пятьдесят шесть, пишу шесть… а пять куда?'},{pose:'thumb',say:'Вчера на полке было ровно сто.'}]}
+   acts:[{pose:'boxes',say:'Ящиков сотня, в каждом десять пайков. Складывать мне до утра!'},{pose:'shrug',say:'7 × 8 = 56. Шестёрку пишу. А пятёрку куда девать?'},{pose:'thumb',say:'Вчера пайков было больше. Я точно помню.'}]}
 };
 /* фразы, которыми отвечает другой герой (диалоги из книг) */
-var REPLY={'Сто ящиков по десять пайков. Я до утра буду складывать.':['korn','Допиши нуль. И ложись спать.'],
- 'Делю 816 на 8, получаю 12. Быстро же?':['korn','Быстро. Прикинь: 8 · 100 уже 800. Сколько цифр должно быть в частном?'],
- '4920 на 60. Я бы сказал — штук восемьдесят, плюс-минус.':['korn','Плюс-минус шлюз не откроет. Убери нули и раздели.'],
- 'Тридцать лотков по сорок ростков. Это же надо столбик рисовать.':['korn','Три на четыре. Потом нули. Столбик отдохнёт.']};
+var REPLY={'Ящиков сотня, в каждом десять пайков. Складывать мне до утра!':['korn','Сто на десять — припиши ноль. Готово, иди спать.'],
+ 'Восемьсот шестнадцать на восемь — двенадцать! Я молния?':['korn','Молния, но мимо. 8 × 100 — уже 800, значит, в ответе три цифры.'],
+ 'Четыре тысячи девятьсот двадцать на шестьдесят… Около восьмидесяти. Сойдёт?':['korn','«Около» замок не откроет. Отбрось по нулю: 492 на 6.'],
+ 'В каждом из тридцати лотков по сорок ростков. Опять столбиком?':['korn','Три на четыре — двенадцать, и два нуля в хвост. Без столбика.']};
 
 /* ================== КНИГИ И ИХ ИСТОРИИ ================== */
 var AUTHOR='https://www.litres.ru/author/a-elarin-34117204/',HOME_BOOKS=4;
@@ -68,13 +68,13 @@ var BOOKS=[
  facts:['Таблица умножения и деления без зубрёжки — через хитрости','Пароли, лабиринты и рисунки складываются из верных ответов','«Найди ошибку Тюка», задачи капитана, мини-проверка после каждой главы','Ответы на отрезной полоске и в конце'],
  chapters:[
   {kind:'scroll',scene:'bg/bg-harbor',fg:'bg/fg-harbor',fx:'sea',cam:[[1.05,0,0],[1.22,-5,2]],title:true,blur:1.2,br:.72,
-   caps:[{at:.05,t:'<b>Гавань Сборов.</b> Штурман-стажёр, тебе поручены расчёты экспедиции.'},{at:.35,t:'Перед тобой Архипелаг Сто — сто клеток моря под Туманом-Забывакой.'},{at:.62,t:'Твой наставник — Румб, компас, вырезанный из старой морской карты. Он точен и не выносит сырости. С тобой юнга Тюк, пеликан. Он торопится и часто ошибается.'}],
+   caps:[{at:.05,t:'<b>Гавань Сборов.</b> Экспедиция готова к отплытию, а все расчёты в ней — твои, штурман-стажёр.'},{at:.35,t:'Впереди Архипелаг Сто: море, расчерченное на сто клеток. Над ними висит Туман-Забывака.'},{at:.62,t:'Рядом — Румб, бумажный компас из старой карты: строгий, точный и боится сырости. И юнга Тюк — пеликан, который считает быстрее, чем думает.'}],
    cast:[{id:'nav',x:.72,at:0,face:1},{id:'rumb',x:.5,at:.55,enter:'left'},{id:'tyuk',x:.88,at:.68,enter:'right',face:-1}],
    say:[{at:.78,id:'tyuk',i:0},{at:.9,id:'rumb',i:0}]},
   {kind:'game',game:'fog',scene:'bg/bg-sea-map',fx:'sea',blur:3,br:.7,num:'Глава 2',name:'Туман-Забывака',
    cast:[{id:'rumb',x:.66,face:-1,h:.30},{id:'tyuk',x:.86,face:-1,h:.42}]},
   {kind:'scroll',scene:'bg/bg-harbor',fx:'sea',num:'Глава 3',name:'Остров за островом',cam:[[1.35,-6,6],[1.05,-2,0]],blur:1.5,br:.8,
-   caps:[{at:.05,t:'На каждом острове — одна хитрость. <b>×4</b> — дважды удвоить. <b>×9</b> — это ×10 без одной группы.'},{at:.4,t:'Восьмёрка — «пять рук и ещё три». Новые ответы выводятся из уже известных, поэтому запоминать приходится меньше.'},{at:.7,t:'А ошибки Тюка ловишь ты.'}],
+   caps:[{at:.05,t:'Каждый остров прячет свой приём. <b>×4</b>: удвой и ещё раз удвой. <b>×9</b>: умножь на 10 и убери одну группу.'},{at:.4,t:'Новое получается из знакомого — поэтому зубрить почти нечего.'},{at:.7,t:'А следить, чтобы Тюк не напутал, придётся тебе.'}],
    cast:[{id:'nav',x:.24,at:0,pose:'point'},{id:'rumb',x:.44,at:.2,enter:'left'},{id:'tyuk',x:.78,at:.45,enter:'fly',face:-1}],
    say:[{at:.55,id:'tyuk',i:3},{at:.8,id:'rumb',i:1}]}
  ]},
@@ -84,11 +84,11 @@ var BOOKS=[
  facts:['Внетабличное умножение и деление в пределах 100','Деление с остатком, столбик и уголок','Шифры, слежка по карте, проявка улик','В последнем деле — настоящее имя Делителя'],
  chapters:[
   {kind:'scroll',scene:'bg/bg-bureau',fg:'bg/fg-bureau',fx:'dust',cam:[[1.04,0,0],[1.22,3,-2]],title:true,br:.68,blur:1.2,
-   caps:[{at:.05,t:'<b>Город Делинск.</b> Подвал старой библиотеки. На двери — табличка «Бюро нерешённых дел».'},{at:.35,t:'Инспектор Грач не верит словам без доказательств. Напарник Мирон торопится с версиями. А ты — новый сотрудник.'}],
+   caps:[{at:.05,t:'<b>Город Делинск.</b> Под старой библиотекой есть дверь с табличкой «Бюро нерешённых дел».'},{at:.35,t:'Инспектор Грач верит только доказательствам. Мирон выдвигает версии быстрее, чем их проверяет. Ты — новенький в Бюро.'}],
    cast:[{id:'grach',x:.78,at:0,face:-1},{id:'miron',x:.52,at:.3,enter:'left',face:1}],
    say:[{at:.55,id:'miron',i:0},{at:.75,id:'grach',i:0}]},
-  {kind:'scroll',scene:'b2-note',fx:'dust',num:'Улика',name:'Записка',cam:[[1.2,0,4],[1.45,-6,6]],br:.9,
-   caps:[{at:.05,t:'Уважаемое Бюро! Поздравляю с новым сотрудником.',note:1},{at:.25,t:'Карточки сосчитаны, яблоки поделены — мило. Но это была разминка.',note:1},{at:.45,t:'Подсказка, раз уж вы так стараетесь: ИЩИ ДВОИХ.<br>— Д.',note:1},{at:.7,t:'Грач перечитывает записку дважды и молча отставляет кружку.'}],
+  {kind:'scroll',scene:'bg/bg-bureau',fx:'dust',num:'Улика',name:'Записка',cam:[[1.2,0,4],[1.45,-6,6]],br:.9,
+   caps:[{at:.05,t:'Бюро, примите поздравления: у вас пополнение.',note:1},{at:.25,t:'С простыми делами вы справились. Дальше будет интереснее.',note:1},{at:.45,t:'Маленькая подсказка для старательных: их двое.<br>— Д.',note:1},{at:.7,t:'Грач читает записку ещё раз и ставит кружку на стол.'}],
    cast:[{id:'grach',x:.8,at:.66,enter:'right',pose:'lens',face:-1,h:.62}],
    say:[{at:.82,id:'grach',text:'Вот и двое. Пошли.'}]},
   {kind:'game',game:'hunt',scene:'bg/bg-archive-night',fx:'dust',num:'Дело',name:'Тень в архиве',br:.85,blur:1,
@@ -99,23 +99,23 @@ var BOOKS=[
  facts:['Столбик и уголок на одно- и двузначное, нули в частном, остаток','Радиограммы, кодовые замки, аварийные вахты с контрольной суммой','Задачи на движение и порядок действий','Ответы на отрезной полоске и в конце'],
  chapters:[
   {kind:'scroll',scene:'bg/bg-cargo',fx:'dust',cam:[[1.05,0,0],[1.25,0,3]],title:true,blur:1.2,br:.7,
-   caps:[{at:.05,t:'<b>«Борей» стоит у лунной станции</b> с открытыми люками. До старта — двое суток, и каждый ящик должен пройти через твой планшет.'},{at:.45,t:'Шестьдесят суток пути. Шестеро кадетов, один наставник — так написано в бортовом журнале.'}],
+   caps:[{at:.05,t:'<b>Грузовой «Борей» пришвартован у лунной станции.</b> Через двое суток старт, а весь груз считаешь ты — ящик за ящиком.'},{at:.45,t:'Рейс — шестьдесят суток. По журналу на борту шесть кадетов и наставник.'}],
    cast:[{id:'korn',x:.76,at:0,face:-1},{id:'gosha',x:.5,at:.3,enter:'left',face:1,pose:'boxes'}],
    say:[{at:.6,id:'gosha',i:0},{at:.85,id:'korn',i:0}]},
   {kind:'scroll',scene:'bg/bg-bridge',fg:'bg/fg-bridge',fx:'warp',num:'Сутки 1–9',name:'Старт',cam:[[1.22,0,0],[1.05,0,-2]],hud:1,blur:1.2,br:.72,
-   caps:[{at:.05,t:'«Борей» отходит от станции. Утром Гоша пересчитывает пайки на полке лавки и хмурится: «Вчера было ровно сто».'},{at:.45,t:'В журнале появляются исправленные цифры. Люки открываются ночью. На складе тают пайки.'}],
+   caps:[{at:.05,t:'«Борей» уходит в рейс. Наутро Гоша считает пайки на полке и хмурится: вчера их было больше.'},{at:.45,t:'Цифры в журнале кто-то правит, ночью хлопают люки, а пайков всё меньше.'}],
    cast:[{id:'lev',x:.18,at:0,face:1,pose:'run'},{id:'maya',x:.38,at:.15,enter:'left'},{id:'asya',x:.6,at:.3,enter:'right',face:-1},{id:'tim',x:.8,at:.45,enter:'right',face:-1}],
    say:[{at:.3,id:'lev',i:0},{at:.55,id:'maya',i:0},{at:.8,id:'tim',i:0}]},
-  {kind:'game',game:'rations',scene:'bg/bg-mess',fx:'dust',num:'Аварийная вахта',name:'Девятые сутки',alert:1,blur:2.5,br:.72,
+  {kind:'game',game:'rations',scene:'bg/bg-mess',fx:'dust',num:'Аварийная вахта',name:'Склад тает',alert:1,blur:2.5,br:.72,
    cast:[{id:'korn',x:.08,face:1,h:.6},{id:'gosha',x:.22,face:1,h:.5},{id:'lev',x:.36,face:1,h:.5,pose:'point'}]}
  ]},
 {id:'logic',short:'Логика тихого города',title:'Логика тихого города',topic:'100 логических задач',grade:'12+',grades:[5],needs:['hard'],c:'#d6232a',d:'#111',
  cover:'cover-lg',pop:null,url:'https://www.litres.ru/book/a-elarin-34117204/logika-tikhogo-goroda-74690314/',meta:['от 12 лет и взрослым','100 задач','подсказки и решения'],sound:'clock',light:1,
  facts:['100 задач с подсказками и подробными решениями','Логика, числа, геометрия, вероятность, стратегия','От быстрых разминок до задач на целый вечер','Для подростков от 12 лет и взрослых'],
  chapters:[
-  {kind:'scroll',scene:'lg-map',fx:'beam',cam:[[1.1,0,6],[1.6,-4,-8]],title:true,ta:.55,
+  {kind:'scroll',scene:'lg-grid',fx:'beam',cam:[[1.1,0,6],[1.6,-4,-8]],title:true,ta:.55,
    caps:[{at:.05,t:'<b>Тихий город.</b> Расписание дежурств, маршрут до библиотеки, ящики на складе.'},{at:.4,t:'За спокойными сюжетами прячутся задачи на логику, числа, геометрию, вероятность и стратегию.'},{at:.7,t:'К каждой — отдельная подсказка: можно подсмотреть намёк, не открывая ответ.'}],cast:[]},
-  {kind:'game',game:'lighthouse',scene:'lg-map',fx:'beam',num:'Задача 01',name:'Очередь у маяка',ta:.55,cast:[]}
+  {kind:'game',game:'lighthouse',scene:'lg-grid',fx:'beam',num:'Задача 01',name:'Очередь у маяка',ta:.55,cast:[]}
  ]}
 ];
 var NEEDS=[{k:'table',t:'Таблица умножения'},{k:'div',t:'Внетабличное: 23 × 4, 78 : 3'},{k:'rem',t:'Деление с остатком'},{k:'col',t:'Столбик'},{k:'div2',t:'Деление на двузначное'},{k:'hard',t:'Хочется задач посложнее'}];
@@ -319,14 +319,14 @@ function scrollStory(){storyScroll.forEach(function(o){var r=o.sec.getBoundingCl
   var tc=$('.title-card',o.st);if(tc){tc.classList.toggle('gone',p>.3);o.st.classList.toggle('titling',p<=.3)}
   o.stage.pups.forEach(function(pp){if(!pp.visible&&p>=pp.enterAt)pp.show()});
   (ch.say||[]).forEach(function(s,k){if(p>=s.at&&!o.said[k]){o.said[k]=1;var pp=o.stage.pups.filter(function(x){return x.id===s.id})[0];if(pp&&pp.visible){var a=CAST[s.id].acts[s.i];var txt=s.text||(a&&a.say);if(a&&a.pose&&!s.text){pp.setPose(a.pose);pp.basePose=a.pose}pp.jump(.8);pp.say(txt)}}});
-  if(ch.hud){var d=Math.round(lerp(1,9,p)),rr=Math.round(lerp(1080,891,p));var hd=$('#hd-d',o.st),hr=$('#hd-r',o.st);if(hd){hd.textContent=d;hr.textContent=rr}}
+  if(ch.hud){var d=Math.round(lerp(1,11,p)),rr=Math.round(lerp(1080,849,p));var hd=$('#hd-d',o.st),hr=$('#hd-r',o.st);if(hd){hd.textContent=d;hr.textContent=rr}}
  })}
 
 /* ================== ИГРЫ-ГЛАВЫ ================== */
 var GAMES={
 /* Туман-Забывака: таблица 10 × 10 под туманом */
 fog:function(st,stage,b){var wrap=el('<div class="fogwrap"><div class="board" style="background-image:url('+IMG('bg/sea-grid')+')"><canvas></canvas><div class="cells"></div><div class="ask" hidden><span></span><input class="inp" inputmode="numeric" aria-label="Ответ" maxlength="3"></div></div></div>');
- st.appendChild(wrap);st.appendChild(el('<div class="panel tr" style="width:min(380px,92vw)"><h3>Туман-Забывака</h3><p class="sub">Сто клеток моря. Туман уходит с клетки, когда в неё вписан верный ответ, — и с соседней тоже. Проведите по карте — ветер разгонит дымку.</p><div style="font:900 40px var(--display)"><span id="fogN">0</span><small style="font-size:18px"> / 100 клеток</small></div><div class="verdict" id="fogV" aria-live="polite">Нажмите на любую клетку.</div></div>'));
+ st.appendChild(wrap);st.appendChild(el('<div class="panel tr" style="width:min(380px,92vw)"><h3>Туман-Забывака</h3><p class="sub">Море поделено на сто клеток. Впишите верный ответ — и туман рассеется над клеткой и её соседями. Проведите по карте — ветер разгонит дымку.</p><div style="font:900 40px var(--display)"><span id="fogN">0</span><small style="font-size:18px"> / 100 клеток</small></div><div class="verdict" id="fogV" aria-live="polite">Нажмите на любую клетку.</div></div>'));
  var board=$('.board',wrap),cv=$('canvas',board),ctx=cv.getContext('2d'),cells=$('.cells',board),ask=$('.ask',board),inp=$('input',ask),cur=null,clear=[],wind=[],n=0;
  for(var i=0;i<100;i++){var r=Math.floor(i/10)+1,c=i%10+1;cells.appendChild(el('<button type="button" data-i="'+i+'" aria-label="'+r+' × '+c+'"></button>'));clear.push(0)}
  var fog=document.createElement('canvas');fog.width=fog.height=512;var fc=fog.getContext('2d');fc.fillStyle='#cfd8e2';fc.fillRect(0,0,512,512);
@@ -368,11 +368,11 @@ hunt:function(st,stage,b){st.appendChild(el('<div class="dark"></div>'));
 },
 /* Борей: аварийная вахта — сколько ртов кормит склад */
 rations:function(st,stage,b){var door=el('<div class="door17"><img src="'+POSE('varya-hand')+'" alt=""><b>№ 17</b></div>');st.appendChild(door);
- st.appendChild(el('<div class="panel tr"><h3>Девятые сутки</h3><p class="sub">В день старта было 1080 пайков — ровно на шестерых по 3 пайка в сутки на 60 суток. Сегодня на полках 891. Корн видит цифры и уходит, ничего не сказав. Посчитайте сами.</p><div class="steps">'+
-  '<label for="r1">Сколько пайков съели за 9 суток? <input class="inp" id="r1" inputmode="numeric"></label><label for="r2">Сколько уходит в сутки? <input class="inp" id="r2" inputmode="numeric"></label><label for="r3">Каждый ест 3 пайка в сутки. Сколько ртов кормит склад? <input class="inp" id="r3" inputmode="numeric"></label></div><div class="verdict" id="rv" aria-live="polite"></div></div>'));
- var A=[189,21,7],done=false,P=function(id){return stage.pups.filter(function(p){return p.id===id})[0]};
+ st.appendChild(el('<div class="panel tr"><h3>Одиннадцатые сутки</h3><p class="sub">При старте запас был 1080 пайков: шесть человек, по 3 пайка в день, 60 суток. Прошло одиннадцать суток, на полках осталось 849. Корн молча смотрит на цифры. Проверьте сами.</p><div class="steps">'+
+  '<label for="r1">Сколько пайков ушло за одиннадцать суток? <input class="inp" id="r1" inputmode="numeric"></label><label for="r2">Сколько это в среднем за сутки? <input class="inp" id="r2" inputmode="numeric"></label><label for="r3">Каждому положено 3 пайка в сутки. На скольких человек уходит запас? <input class="inp" id="r3" inputmode="numeric"></label></div><div class="verdict" id="rv" aria-live="polite"></div></div>'));
+ var A=[231,21,7],done=false,P=function(id){return stage.pups.filter(function(p){return p.id===id})[0]};
  $$('input',st).forEach(function(x){x.addEventListener('input',function(){var v=A.map(function(a,i){return +$('#r'+(i+1),st).value===a}),o=$('#rv',st);
-  if(v[0]&&v[1]&&v[2]&&!done){done=true;o.className='verdict ok';o.textContent='Семь. А в экипаже — шестеро… Пересчитайте экипаж.';Snd.alarm();hook('award','crew');door.classList.add('on');
+  if(v[0]&&v[1]&&v[2]&&!done){done=true;o.className='verdict ok';o.textContent='Выходит семь. А по журналу на борту шестеро…';Snd.alarm();hook('award','crew');door.classList.add('on');
    P('korn').setPose('read');P('gosha').setPose('shrug');P('lev').setPose('point');P('lev').face=1;stage.pups.forEach(function(p,i){setTimeout(function(){p.jump(1)},i*150)});setTimeout(function(){P('gosha').say('Семь?! Нас же шестеро!')},900);setTimeout(function(){P('korn').say('Пересчитай экипаж.')},2800)}
   else if(!done){o.className='verdict';o.textContent=v[0]?(v[1]?'Осталось разделить на 3.':'Теперь — 189 : 9.'):''}})})
 },

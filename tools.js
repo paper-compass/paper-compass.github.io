@@ -112,7 +112,7 @@ var TRAINERS=[
  {id:'corner',name:'Уголок',sub:'Деление уголком',book:'borey',grade:'4 класс',icon:'lev-point',scene:'bg/bg-mess',fx:'stars',
   lead:'Сначала — сколько цифр будет в частном. Потом шаг за шагом: цифра частного, произведение, разность. Снесённые цифры появятся сами.',levels:['На однозначное','Нули в частном','С остатком','На двузначное'],
   cast:[{id:'korn',x:.3,h:.74,pose:'read'},{id:'lev',x:.74,h:.6,face:-1}],run:trCorner},
- {id:'queue',name:'Очередь у маяка',sub:'Логика: кто когда пришёл',book:'logic',grade:'от 9 лет',icon:null,scene:'lg-map',fx:'beam',
+ {id:'queue',name:'Очередь у маяка',sub:'Логика: кто когда пришёл',book:'logic',grade:'от 9 лет',icon:null,scene:'lg-grid',fx:'beam',
   lead:'Каждая задача собирается заново и имеет ровно одно решение. Условия сами подсвечиваются, если их нарушить.',levels:['3 человека','4 человека','5 человек'],
   cast:[],run:trQueue}
 ];
@@ -170,7 +170,7 @@ function trTable(x){var d=J.get(),mode=x.level,R=20,i=0,res=[],forced=null,retry
  function done(){var n=res.filter(Boolean).length;dots();$('#q',x.wk).innerHTML='<div class="sum"><b>'+n+' из '+R+'</b><span>'+(n===R?'Без единой ошибки!':n>=15?'Отличный рейс.':'Туман отступает — ещё раунд?')+'</span><button class="btn" type="button">Ещё раунд</button></div>';
   $('#vd',x.wk).textContent='';x.say('tyuk',n===R?'Двадцать из двадцати! Я бы тоже так смог. Наверное.':'Раунд окончен. Карта стала светлее!','proud');
   $('#q .btn',x.wk).onclick=function(){i=0;res=[];retry=[];ask()}}
- paint();ask();if(!x._greet){x._greet=1;setTimeout(function(){x.say('tyuk','Сто клеток моря под туманом. Начнём с тех, что потемнее!')},700)}}
+ paint();ask();if(!x._greet){x._greet=1;setTimeout(function(){x.say('tyuk','Туман сгустился над морем. Начнём с самых тёмных клеток!')},700)}}
 
 /* ---- 2. Ошибка Тюка ---- */
 function trTyuk(x){var r=MC.rng(Date.now()%1e9),c=null,phase=0;
