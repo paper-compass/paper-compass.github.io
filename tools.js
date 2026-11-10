@@ -133,7 +133,7 @@ VIEWS.train=function(v,arg){var T=TRAINERS.filter(function(t){return t.id===arg}
  var x={v:v,b:b,T:T,wk:$('.wk',v),level:lv,ok:0,no:0,st:0,
   stage:host($('.hostbox',v),{scene:T.scene,c:b.c,d:b.d,fx:T.fx,cast:T.cast}),
   P:function(id){return this.stage.pups.filter(function(p){return p.id===id})[0]},
-  say:function(id,text,pose,box){var p=id&&this.P(id);if(p){if(pose){p.setPose(pose)}p.jump(.8);p.say(text)}else{var c=$('.hcap',this.stage.root);c.hidden=false;c.textContent=text;c.classList.remove('pop');void c.offsetWidth;c.classList.add('pop')}
+  say:function(id,text,pose,box){var p=id&&this.P(id);if(p){if(pose){p.setPose(pose)}p.jump(.8);p.say(text,0,1)}else{var c=$('.hcap',this.stage.root);c.hidden=false;c.textContent=text;c.classList.remove('pop');void c.offsetWidth;c.classList.add('pop')}
    var hb=$('.hintbox',this.wk);if(hb&&box){hb.innerHTML='<b>'+(p?p.c.name:'Подсказка')+':</b> '+esc(text);hb.hidden=false}},
   mark:function(ok){if(ok){this.ok++;this.st++;var dd=J.get();if(this.st>(dd.best[T.id]||0)){dd.best[T.id]=this.st;J.save();$('#sBest',v).textContent=this.st}}else{this.no++;this.st=0}
    $('#sOk',v).textContent=this.ok;$('#sNo',v).textContent=this.no;$('#sSt',v).textContent=this.st;track(T.id,ok)}};
@@ -224,11 +224,13 @@ function cellInput(ch,cls){return '<input class="c'+(cls?' '+cls:'')+'" inputmod
 function round1(n){var s=String(n),p=Math.pow(10,s.length-1);return Math.round(n/p)*p}
 
 /* ---- 4. Столбик ---- */
+/* клетки столбика/уголка — по ширине карточки, чтобы пример не вылезал за край на телефоне */
+function fitCols(g,first,n){var w=(g.parentNode.clientWidth||320)-first-8,base=innerWidth<761?40:48;g.style.setProperty('--cw',Math.max(26,Math.min(base,Math.floor(w/n)))+'px')}
 function trColumn(x){var r=MC.rng(Date.now()%1e9),flow=null,L=null,H=null;
  x.wk.innerHTML='<div class="colwrap"><div class="colgrid" id="cg"></div></div><div class="verdict" id="vd" aria-live="polite"></div><div class="hintbox" hidden></div><div class="row2"><button class="btn ghost" type="button" id="hint">Подсказка Корна</button><button class="btn ghost" type="button" id="skip">Другой пример</button></div><p class="small">Пишите справа налево. Снизу — то, что держите в уме, Корн подскажет по кнопке.</p>';
  function gen(){var a,b;if(x.level===0){a=MC.rnd(r,112,989);b=MC.rnd(r,3,9)}else if(x.level===1){a=MC.rnd(r,1012,9989);b=MC.rnd(r,3,9)}else{a=MC.rnd(r,112,989);do{b=MC.rnd(r,12,98)}while(b%10===0||b%11===0)}return [a,b]}
  function next(){var ab=gen(),a=ab[0],b=ab[1];L=MC.mulLayout(a,b);H=MC.mulHints(a,b);var W=Math.max(String(a).length,String(b).length,String(a*b).length,(L.rows.filter(function(q){return q.kind==='ans'}).reduce(function(m,q){return Math.max(m,q.text.length+q.shift)},0)))+0,g=$('#cg',x.wk),html='',seq=[],ai=0;
-  g.style.gridTemplateColumns='32px repeat('+W+',var(--cw))';
+  g.style.gridTemplateColumns='32px repeat('+W+',var(--cw))';fitCols(g,32,W);
   L.rows.forEach(function(row,ri){var gr=ri+1,len=row.text.length;if(row.sign)html+='<div class="c sg" style="grid-row:'+gr+';grid-column:1">'+row.sign+'</div>';
    for(var k=0;k<len;k++){var col=2+W-row.shift-len+k,ch=row.text[k],ln=row.line?' ln':'';
     if(row.kind==='given')html+='<div class="c'+ln+'" style="grid-row:'+gr+';grid-column:'+col+'">'+ch+'</div>';
@@ -254,7 +256,7 @@ function trCorner(x){var r=MC.rng(Date.now()%1e9),flow=null,plan=null;
   else{d=MC.rnd(r,12,48);q=MC.rnd(r,12,199)}
   return [d*q+k,d]}
  function next(){var nd=gen(),n=nd[0],d=nd[1];plan=MC.divPlan(n,d);var Lq=plan.L,ns=String(n),N=ns.length,R=Math.max(String(d).length,Lq.q.length),g=$('#cg',x.wk),html='',seq=[];
-  g.style.gridTemplateColumns='26px repeat('+N+',var(--cw)) repeat('+R+',var(--cw))';
+  g.style.gridTemplateColumns='26px repeat('+N+',var(--cw)) repeat('+R+',var(--cw))';fitCols(g,26,N+R);
   for(var i=0;i<N;i++)html+='<div class="c" style="grid-row:1;grid-column:'+(2+i)+'">'+ns[i]+'</div>';
   for(i=0;i<R;i++){var ch=String(d)[i];html+='<div class="c rb'+(i===0?' vl':'')+'" style="grid-row:1;grid-column:'+(2+N+i)+'">'+(ch||'')+'</div>';
    html+='<div class="c rq hl'+(i===0?' vl':'')+'" style="grid-row:2;grid-column:'+(2+N+i)+'" data-q="'+i+'">'+(i<Lq.q.length?cellInput(Lq.q[i]):'')+'</div>'}

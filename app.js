@@ -12,7 +12,9 @@ var PA={'tyuk-sly':'tyuk-oops','tyuk-slate':'tyuk-stand','tyuk-walk':'tyuk-stand
  'miron-run':'miron-point','rumb-show':'rumb-point','rumb-wet':'rumb-doubt','rumb-34':'rumb-turn-2','rumb-edge':'rumb-turn-3','rumb-back':'rumb-turn-4','varya-hand':'hand-door'};
 var FR={};('asya-sprouts asya-stand gosha-stand gosha-thumbs-up grach-lens grach-mug grach-stand korn-mug korn-read korn-stand lev-point lev-stand maya-headphones maya-stand '+
  'miron-book miron-point miron-think rumb-doubt rumb-front rumb-point tim-stand tim-tools tyuk-oops tyuk-proud tyuk-stand').split(' ').forEach(function(n){FR[n]=1});
-var IMG=function(n){return 'img/'+n+'.webp'}, POSE=function(n){return 'h/'+(PA[n]||n)+'.webp'};
+/* версии картинок героев: после замены кадров героя увеличить его метку — иначе браузер возьмёт часть кадров из кэша и роба «мигает» старым цветом */
+var HV={korn:2,lev:2,maya:2,tim:2,asya:2,gosha:2};
+var IMG=function(n){return 'img/'+n+'.webp'}, POSE=function(n){var f=PA[n]||n,v=HV[f.split('-')[0]];return 'h/'+f+'.webp'+(v?'?v='+v:'')};
 /* поза: строка-имя или {src, blink, talk, s}; кадры моргания и речи подхватываются сами, если они есть */
 function pdef(d){if(typeof d!=='string')return d;var n=PA[d]||d;return FR[n]?{src:n,blink:n+'-blink',talk:n+'-talk'}:{src:n}}
 var cache={};function pic(src){if(!cache[src]){var i=new Image();i.decoding='async';i.src=src;cache[src]=i}return cache[src]}
@@ -247,10 +249,10 @@ Puppet.prototype.draw=function(ctx,t,W,H){if(!this.visible)return;var im=this.im
  ctx.rotate(this.lean*this.face*.035);ctx.scale(sx*this.hs,sy*this.hs*(1+.006*breath));
  ctx.drawImage(im,-pw/2,-ph,pw,ph);
  ctx.restore()};
-Puppet.prototype.say=function(text,who){this.st.bubble(this,text,who)};
+Puppet.prototype.say=function(text,who,now){this.st.bubble(this,text,who,now)};
 Puppet.prototype.poke=function(){var c=this.c,a=c.acts[this.act%c.acts.length];this.act++;Snd.pop();
  if(this.fly){}else if(a.spin){this.spin()}else if(a.fly){var hx=this.x,gx=hx>.5?hx-.45:hx+.45;this.startFly(hx,gx,{next:{to:gx,dur:.3,arc:0,sit:1,next:{to:hx}}})}else{if(a.pose){this.setPose(a.pose);this.basePose=a.pose}this.jump(1.1)}
- if(a.say){this.say(a.say);var r=REPLY[a.say],st=this.st;if(r){var other=st.pups.filter(function(p){return p.id===r[0]&&p.visible})[0];if(other)setTimeout(function(){other.jump(.9);other.say(r[1])},1700)}}};
+ if(a.say){this.say(a.say,0,1);var r=REPLY[a.say],st=this.st;if(r){var other=st.pups.filter(function(p){return p.id===r[0]&&p.visible})[0];if(other)setTimeout(function(){other.jump(.9);other.say(r[1])},1700)}}};
 
 /* ================== СЦЕНА ================== */
 var STAGES=[],scrollV=0,lastScroll=scrollY;
@@ -262,11 +264,37 @@ function Stage(root,opts){this.root=root;this.cv=$('canvas.pup',root);this.ctx=t
 Stage.prototype.resize=function(){var r=this.root.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);this.W=r.width;this.H=r.height;this.d=d;
  this.k=this.fit&&r.height?clamp((r.width/r.height)/.95,.58,1):1;
  [this.cv,this.fxc].forEach(function(c){if(!c)return;c.width=r.width*d;c.height=r.height*d});this.parts=[]};
-Stage.prototype.bubble=function(p,text,who){var b=el('<div class="bub"><small>'+(who||p.c.name)+'</small><span></span></div>');this.bubs.appendChild(b);p._bub&&p._bub.remove();p._bub=b;
+/* реплики: по очереди, каждая держится столько, чтобы успеть прочитать; размер облачка сразу под весь текст */
+/* реплики идут по очереди и не перебивают друг друга, пока предыдущую не успели прочитать; now — ответ на действие ребёнка, показываем сразу */
+Stage.prototype.bubble=function(p,text,who,now){if(!text)return;var q=this.bq||(this.bq=[]);if(now){q.length=0;clearTimeout(this._bt);this._bt=null;this.showBub(p,text,who);return}if(q.length>=4)return;q.push([p,text,who]);this.bpump()};
+Stage.prototype.bpump=function(){var self=this;if(this._bt)return;var wait=(this.busy||0)-performance.now();
+ if(wait>0){this._bt=setTimeout(function(){self._bt=null;self.bpump()},wait);return}
+ var it=(this.bq||[]).shift();if(!it)return;if(!this.active){this.bq.length=0;return}
+ this.showBub(it[0],it[1],it[2]);if(this.bq.length)this.bpump()};
+Stage.prototype.showBub=function(p,text,who){var b=el('<div class="bub"><small>'+(who||p.c.name)+'</small><span><i></i><u></u></span></div>');this.bubs.appendChild(b);p._bub&&p._bub.remove();p._bub=b;
  if(this.W<640)this.pups.forEach(function(q){if(q!==p&&q._bub){q._bub.remove();q._bub=null}});
- var sp=$('span',b),i=0;requestAnimationFrame(function(){b.classList.add('on')});
- p.talking=true;(function type(){if(i<=text.length){sp.textContent=text.slice(0,i);if(i%3===0)Snd.tick();i+=RM?text.length:1;setTimeout(type,RM?0:22)}else p.talking=false})();
- setTimeout(function(){b.classList.remove('on');setTimeout(function(){b.remove()},400);if(p._bub===b)p._bub=null},2600+text.length*45)};
+ var seen=$('i',b),rest=$('u',b),n=text.length,i=0,tms=RM?0:28,typeT=n*tms;rest.textContent=text;b._w=b.offsetWidth;b._h=b.offsetHeight;this.placeBub(p);
+ requestAnimationFrame(function(){b.classList.add('on')});
+ p.talking=true;(function type(){if(i<=n){seen.textContent=text.slice(0,i);rest.textContent=text.slice(i);if(i%3===0)Snd.tick();i+=RM?n:1;setTimeout(type,tms)}else p.talking=false})();
+ this.busy=performance.now()+typeT+Math.max(2200,n*80);
+ setTimeout(function(){b.classList.remove('on');setTimeout(function(){b.remove()},400);if(p._bub===b)p._bub=null},typeT+Math.max(3200,1400+n*90))};
+/* облачко — над головами: не закрывает ни говорящего, ни соседей; если над головами нет места — ниже голов, хвостик вверх */
+Stage.prototype.placeBub=function(p){var b=p._bub;if(!b)return;var W=this.W,H=this.H,B=p.box(W,H);if(!B)return;
+ var bw=b._w||b.offsetWidth,bh=b._h||b.offsetHeight,m=8,top0=H>=innerHeight*.9?(($('.top')||{}).offsetHeight||60)+6:m,pups=this.pups,now=performance.now(),up=false;
+ /* подписи и табло — тоже препятствия: реплика не должна их закрывать (список обновляем раз в 300 мс) */
+ if(!this._obsT||now-this._obsT>300){this._obsT=now;var R=this.root.getBoundingClientRect(),obs=this._obs=[];
+  $$('.cap:not(.wait),.hud',this.root).forEach(function(e){var o=e.getBoundingClientRect();if(o.width&&o.height&&+getComputedStyle(e).opacity>.2)obs.push([o.left-R.left,o.right-R.left,o.bottom-R.top])})}
+ function at(cx,dy){var x0=cx-bw/2,x1=cx+bw/2,hd=[],bot=B.y+B.h*dy,lim=top0;
+  pups.forEach(function(q){if(!q.visible)return;var r=q.box(W,H);if(r&&r.x+r.w*.82>x0&&r.x+r.w*.18<x1)hd.push([r,q===p])});
+  hd.forEach(function(h){bot=Math.min(bot,h[1]?B.y+B.h*dy:h[0].y-6)});
+  (this_obs||[]).forEach(function(o){if(o[1]>x0-6&&o[0]<x1+6)lim=Math.max(lim,o[2]+8)});
+  return {cx:cx,bot:bot,lim:lim,hd:hd,ok:bot-bh>=lim}}
+ var this_obs=this._obs,c0=clamp(B.fx,bw/2+m,W-bw/2-m),sh=bw/2-30,P=null;
+ /* 1) над головой; 2) сдвиг вбок, пока хвостик достаёт до говорящего; 3) чуть ниже, на макушку; 4) под лицом */
+ [[c0,-.012],[clamp(B.fx+sh,bw/2+m,W-bw/2-m),-.012],[clamp(B.fx-sh,bw/2+m,W-bw/2-m),-.012],[c0,.05]].some(function(v){var r=at(v[0],v[1]);if(r.ok)P=r;return r.ok});
+ if(!P){P=at(c0,-.012);var t=P.lim;P.hd.forEach(function(h){t=Math.max(t,h[0].y+h[0].h*.22+14)});P.bot=Math.min(t,H-m-bh)+bh;up=true}
+ if(b._up!==up){b._up=up;b.classList.toggle('up',up)}
+ b.style.left=P.cx+'px';b.style.top=P.bot+'px';b.style.setProperty('--tx',clamp(B.fx-P.cx,-bw/2+24,bw/2-24)+'px')};
 Stage.prototype.hit=function(cx,cy){var r=this.root.getBoundingClientRect(),x=cx-r.left,y=cy-r.top,best=null;
  for(var i=this.pups.length-1;i>=0;i--){var p=this.pups[i];if(!p.visible)continue;var b=p.box(this.W,this.H);if(b&&x>b.x+b.w*.12&&x<b.x+b.w*.88&&y>b.y&&y<b.fy){best=p;break}}return best};
 Stage.prototype.frame=function(dt){if(!this.active)return;this.t+=dt;var t=this.t,W=this.W,H=this.H,r=this.root.getBoundingClientRect(),ctx=this.ctx,d=this.d;
@@ -276,7 +304,7 @@ Stage.prototype.frame=function(dt){if(!this.active)return;this.t+=dt;var t=this.
  if(this.ready){
  var hv=ptr.mouse?this.hit(ptr.x,ptr.y):null;this.pups.forEach(function(p){p.hov=p===hv});this.root.style.cursor=hv?'pointer':'';
  var self=this;this.pups.slice().sort(function(a,b){return (a.fly?1:0)-(b.fly?1:0)||a.h-b.h}).forEach(function(p){p.update(dt,t,W,H,r);p.draw(ctx,t,W,H);
-   if(p._bub){var b=p.box(W,H);if(b){p._bub.style.left=clamp(b.fx,150,W-150)+'px';p._bub.style.top=Math.max(90,b.y+b.h*.06)+'px'}}});}
+   if(p._bub)self.placeBub(p)});}
  if(this.fx)FX[this.kind]&&FX[this.kind](this,dt,t)};
 
 /* ================== ЭФФЕКТЫ ================== */
@@ -361,7 +389,7 @@ function renderStory(b){var v=$('#v-story');v.innerHTML='';storyScroll=[];v.styl
   if(ch.hud)st.appendChild(el('<div class="hud" aria-hidden="true"><div>Сутки <b id="hd-d">1</b></div><div>Пайки <b id="hd-r">1080</b></div><div>Экипаж <b>6</b></div><div>Курс <b>Церера-4</b></div></div>'));
   var stage=new Stage(st,{fx:ch.fx,cast:ch.cast,sec:sec,c:b.c,fit:1});
   if(ch.kind==='scroll')storyScroll.push({sec:sec,st:st,ch:ch,stage:stage,said:{}});
-  if(ch.kind==='game')GAMES[ch.game](st,stage,b);
+  if(ch.kind==='game'){GAMES[ch.game](st,stage,b);if(matchMedia('(max-width:760px)').matches){$$('.panel',st).forEach(function(pn){pn.classList.add('flow');sec.appendChild(pn)});sec.classList.add('flowsec')}}
  });
  var i=BOOKS.indexOf(b),nx=BOOKS[(i+1)%BOOKS.length];
  v.appendChild(el('<section class="finale" style="--c:'+b.c+'"><div class="wrap"><div class="book3d"><img src="'+IMG(b.cover)+'" alt="Обложка: '+b.title+'" width="700" height="990"></div><div><div class="eyebrow">Продолжение — в книге</div><h2 style="font-size:clamp(44px,6vw,92px);text-transform:uppercase;margin-top:12px">'+b.short+'</h2><ul class="facts">'+b.facts.map(function(f){return '<li>'+f+'</li>'}).join('')+'</ul><a class="buy" href="'+b.url+'">Открыть на Литрес →</a></div></div></section>'));
@@ -373,7 +401,7 @@ function scrollStory(){if(!storyScroll.length)return;var vh=innerHeight,small=in
  storyScroll.forEach(function(o,k){var r=R[k][0],len=R[k][1]-vh,p=clamp(-r.top/len,0,1);o.stage.p=p;if(r.bottom<0||r.top>vh)return;if(o.lp===p)return;o.lp=p;var ch=o.ch;
   var E=o.el||(o.el={cam:$('.cam',o.st),fw:$('.fgw',o.st),caps:$$('.cap',o.st),tc:$('.title-card',o.st),hd:$('#hd-d',o.st),hr:$('#hd-r',o.st)});
   var a=ch.cam[0],b=ch.cam[1],e=ease(p);var sc=lerp(a[0],b[0],e),tx=lerp(a[1],b[1],e),ty=lerp(a[2],b[2],e);E.cam.style.transform='scale('+sc+') translate('+tx+'%,'+ty+'%)';
-  if(E.fw)E.fw.style.transform='scale('+(1+(sc-1)*1.6)+') translate('+tx*1.5+'%,'+(ty*1.5+(1-e)*1.5)+'%)';
+  if(E.fw){var fk=innerWidth<innerHeight*.8?.5:1.6;E.fw.style.transform='scale('+(1+(sc-1)*fk)+') translate('+tx*1.5+'%,'+(ty*(fk<1?.5:1.5)+(1-e)*1.5)+'%)'}
   E.caps.forEach(function(c){if(p>=c._at&&c.classList.contains('wait')){c.classList.remove('wait');Snd.tick()}});
   if(small){var vis=E.caps.filter(function(c){return !c.classList.contains('wait')});vis.forEach(function(c,i){c.classList.toggle('past',i<vis.length-2)})}
   if(E.tc){E.tc.classList.toggle('gone',p>.3);o.st.classList.toggle('titling',p<=.3)}
@@ -402,12 +430,12 @@ fog:function(st,stage,b){var wrap=el('<div class="fogwrap"><div class="board" st
   ctx.globalCompositeOperation='source-over'};
  function open(i){if(clear[i]>0)return;cur=i;var r=Math.floor(i/10)+1,c=i%10+1,bt=cells.children[i];$('span',ask).textContent=r+' × '+c+' =';ask.hidden=false;
   ask.style.left=clamp((c-.5)*10,22,78)+'%';ask.style.top=Math.max(18,(r-.5)*10)+'%';inp.value='';inp.focus()}
- function reveal(i){if(clear[i]>0)return;clear[i]=.01;var bt=cells.children[i];bt.classList.add('done');bt.textContent=(Math.floor(i/10)+1)*(i%10+1);n++;$('#fogN',st).textContent=n;if(n>=100)hook('award','fog')}
+ function reveal(i){if(clear[i]>0)return;clear[i]=.01;var bt=cells.children[i];bt.classList.add('done');bt.textContent=(Math.floor(i/10)+1)*(i%10+1);n++;$('#fogN',st.parentNode).textContent=n;if(n>=100)hook('award','fog')}
  cells.addEventListener('click',function(e){var bt=e.target.closest('button');if(bt)open(+bt.dataset.i)});
  inp.addEventListener('keydown',function(e){if(e.key!=='Enter')return;var r=Math.floor(cur/10)+1,c=cur%10+1,ok=+inp.value===r*c;var tyuk=stage.pups.filter(function(p){return p.id==='tyuk'})[0],rumb=stage.pups.filter(function(p){return p.id==='rumb'})[0];
   hook('track','story',ok);if(ok){reveal(cur);var nb=[cur-1,cur+1,cur-10,cur+10].filter(function(j){return j>=0&&j<100&&clear[j]===0&&!(Math.abs(j-cur)===1&&Math.floor(j/10)!==Math.floor(cur/10))});if(nb.length)reveal(nb[Math.floor(Math.random()*nb.length)]);
-   ask.hidden=true;Snd.ok();rumb&&rumb.jump(1.2);tyuk&&tyuk.setPose('proud');$('#fogV',st).className='verdict ok';$('#fogV',st).textContent=n>=100?'Архипелаг открыт! В книге — 15 островов и хитрость на каждом.':'Туман уходит! Ещё клетку?';if(n%10<2&&n>2)tyuk&&tyuk.say('Туман уходит! А можно побыстрее?')}
-  else{ask.classList.remove('shake');void ask.offsetWidth;ask.classList.add('shake');Snd.no();rumb&&rumb.setPose('doubt');rumb&&rumb.say('Строго на север! Проверь: '+r+' × '+c+' — это '+r+' раз по '+c+'.');$('#fogV',st).className='verdict no';$('#fogV',st).textContent='Туман не уходит. Ещё раз.'}});
+   ask.hidden=true;Snd.ok();rumb&&rumb.jump(1.2);tyuk&&tyuk.setPose('proud');$('#fogV',st.parentNode).className='verdict ok';$('#fogV',st.parentNode).textContent=n>=100?'Архипелаг открыт! В книге — 15 островов и хитрость на каждом.':'Туман уходит! Ещё клетку?';if(n%10<2&&n>2)tyuk&&tyuk.say('Туман уходит! А можно побыстрее?',0,1)}
+  else{ask.classList.remove('shake');void ask.offsetWidth;ask.classList.add('shake');Snd.no();rumb&&rumb.setPose('doubt');rumb&&rumb.say('Строго на север! Проверь: '+r+' × '+c+' — это '+r+' раз по '+c+'.',0,1);$('#fogV',st.parentNode).className='verdict no';$('#fogV',st.parentNode).textContent='Туман не уходит. Ещё раз.'}});
  inp.addEventListener('blur',function(){setTimeout(function(){if(document.activeElement!==inp)ask.hidden=true},200)});
 },
 /* Бюро: найти Делителя фонарём */
@@ -416,22 +444,22 @@ hunt:function(st,stage,b){st.appendChild(el('<div class="dark"></div>'));
  var dark=$('.dark',st),del=stage.pups[0],caught=false,turn=0;del.dark=true;del.y=.9;del.walkTo(.7,.08);del.baseFace=1;
  st.addEventListener('pointermove',function(e){var r=st.getBoundingClientRect();dark.style.setProperty('--fx',(e.clientX-r.left)+'px');dark.style.setProperty('--fy',(e.clientY-r.top)+'px')});
  stage.onFrame=function(dt,t,r){if(caught)return;if(del.tx===null){turn++;del.walkTo(turn%2?.18:.62,.07+Math.random()*.04)}
-  var bx=del.box(stage.W,stage.H);if(!bx)return;var px=ptr.x-r.left,py=ptr.y-r.top;if(px>bx.x&&px<bx.x+bx.w&&py>bx.y&&py<bx.fy){caught=true;del.dark=false;del.say('Делить поровну умеют все. Делить честно — единицы.','Делитель');Snd.alarm();
+  var bx=del.box(stage.W,stage.H);if(!bx)return;var px=ptr.x-r.left,py=ptr.y-r.top;if(px>bx.x&&px<bx.x+bx.w&&py>bx.y&&py<bx.fy){caught=true;del.dark=false;del.say('Делить поровну умеют все. Делить честно — единицы.','Делитель',1);Snd.alarm();
    var note=el('<button class="dropnote" type="button" style="left:'+(bx.fx/stage.W*100)+'%;top:'+(bx.y/stage.H*100+30)+'%">Записка Д.<br><small style="font:700 13px var(--body)">открыть</small></button>');st.appendChild(note);
    setTimeout(function(){del.dark=true;del.walkTo(del.x<.5?-.3:1.3,.6)},1600);setTimeout(function(){note.classList.add('on')},500);
-   $('#hv',st).className='verdict ok';$('#hv',st).textContent='Он ушёл — но выронил записку!';note.addEventListener('click',function(){cipher($('#ciph',st));note.remove()})}};
+   $('#hv',st.parentNode).className='verdict ok';$('#hv',st.parentNode).textContent='Он ушёл — но выронил записку!';note.addEventListener('click',function(){cipher($('#ciph',st.parentNode));note.remove()})}};
  function cipher(box){var ex=[['56 : 7',8],['9 × 6',54],['63 : 9',7],['4 × 9',36]],key=[[6,'К'],[8,'Л'],[45,'О'],[54,'У'],[9,'Р'],[7,'П'],[32,'Е'],[36,'А']];
   box.innerHTML='<p class="sub" style="margin-top:14px">Записка зашифрована. Решите примеры и найдите ответы в ключе.</p><div class="keyt">'+key.map(function(k){return '<div>'+k[0]+'</div>'}).join('')+key.map(function(k){return '<div>'+k[1]+'</div>'}).join('')+'</div><div class="ciph">'+
    ex.map(function(e,i){return '<label for="hc'+i+'">'+e[0]+' =<input class="inp" id="hc'+i+'" inputmode="numeric" maxlength="3" autocomplete="off"></label>'}).join('')+'</div><div class="word">'+ex.map(function(){return '<span>?</span>'}).join('')+'</div>';
   var sp=$$('.word span',box);$$('input',box).forEach(function(inp,i){inp.addEventListener('input',function(){var v=+inp.value,k=key.filter(function(x){return x[0]===v})[0];sp[i].textContent=k?k[1]:'?';sp[i].classList.toggle('on',v===ex[i][1]);
-   if(ex.every(function(e,j){return +$('#hc'+j,box).value===e[1]})){Snd.ok();hook('award','lupa');$('#hv',st).textContent='ЛУПА. Делитель подсказывает, чем искать. Дело продолжается в книге.'}})})}
+   if(ex.every(function(e,j){return +$('#hc'+j,box).value===e[1]})){Snd.ok();hook('award','lupa');$('#hv',st.parentNode).textContent='ЛУПА. Делитель подсказывает, чем искать. Дело продолжается в книге.'}})})}
 },
 /* Борей: аварийная вахта — сколько ртов кормит склад */
 rations:function(st,stage,b){var door=el('<div class="door17"><img src="'+POSE('varya-hand')+'" alt=""><b>№ 17</b></div>');st.appendChild(door);
  st.appendChild(el('<div class="panel tr"><h3>Одиннадцатые сутки</h3><p class="sub">При старте запас был 1080 пайков: шесть человек, по 3 пайка в день, 60 суток. Прошло одиннадцать суток, на полках осталось 849. Корн молча смотрит на цифры. Проверьте сами.</p><div class="steps">'+
   '<label for="r1">Сколько пайков ушло за одиннадцать суток? <input class="inp" id="r1" inputmode="numeric"></label><label for="r2">Сколько это в среднем за сутки? <input class="inp" id="r2" inputmode="numeric"></label><label for="r3">Каждому положено 3 пайка в сутки. На скольких человек уходит запас? <input class="inp" id="r3" inputmode="numeric"></label></div><div class="verdict" id="rv" aria-live="polite"></div></div>'));
  var A=[231,21,7],done=false,P=function(id){return stage.pups.filter(function(p){return p.id===id})[0]};
- $$('input',st).forEach(function(x){x.addEventListener('input',function(){var v=A.map(function(a,i){return +$('#r'+(i+1),st).value===a}),o=$('#rv',st);
+ $$('input',st).forEach(function(x){x.addEventListener('input',function(){var v=A.map(function(a,i){return +$('#r'+(i+1),st.parentNode).value===a}),o=$('#rv',st.parentNode);
   if(v[0]&&v[1]&&v[2]&&!done){done=true;o.className='verdict ok';o.textContent='Выходит семь. А по журналу на борту шестеро…';Snd.alarm();hook('award','crew');door.classList.add('on');
    P('korn').setPose('read');P('gosha').setPose('shrug');P('lev').setPose('point');P('lev').face=1;stage.pups.forEach(function(p,i){setTimeout(function(){p.jump(1)},i*150)});setTimeout(function(){P('gosha').say('Семь?! Нас же шестеро!')},900);setTimeout(function(){P('korn').say('Пересчитай экипаж.')},2800)}
   else if(!done){o.className='verdict';o.textContent=v[0]?(v[1]?'Осталось разделить на 3.':'Теперь — 189 : 9.'):''}})})

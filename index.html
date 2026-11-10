@@ -629,6 +629,33 @@ footer .tl a{color:#cfc8b8}
  .claim b{font-size:44px}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.rose circle,.rose line{stroke-dashoffset:0}}
+
+/* ===== 09.11 вечер: телефон — реплики, передний план, панели игр, тренажёры ===== */
+.bub span i{font-style:normal}.bub span u{text-decoration:none;color:transparent}
+.bub::after{left:calc(50% + var(--tx,0px))}
+.bub.up::after{bottom:auto;top:-13px;transform:translateX(-50%) rotate(225deg) skew(10deg,10deg)}
+.top.solid{background:var(--topbg,#f2ede2)}
+.minitiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:10px}
+.minitiles a{display:grid;grid-template-columns:10px minmax(7.4em,auto) 1fr;column-gap:12px;align-items:center;line-height:1.15}
+.minitiles a small{font-size:14px;line-height:1.25}
+.ciph label{white-space:nowrap}
+.ciph .inp{width:64px}
+.colgrid{grid-auto-rows:calc(var(--cw) + 8px);font-size:calc(var(--cw)*.75)}
+.colgrid input.c{width:calc(var(--cw) - 6px);height:calc(var(--cw) + 2px)}
+.colgrid.div div[data-row]:not(.show){display:none!important}
+@media (max-aspect-ratio:4/5){
+ .fgw img{position:absolute;left:0;bottom:0;width:100%;height:62%;object-fit:cover;object-position:50% 100%}
+}
+@media (max-width:760px){
+ .ch.flowsec{padding-bottom:28px}
+ .ch.flowsec>.stage{position:sticky;top:0}
+ .panel.flow{position:relative;z-index:9;top:auto;bottom:auto;left:auto;right:auto;transform:none;width:auto!important;max-height:none;overflow:visible;margin:-34svh 12px 0}
+ .ciph{gap:8px}.ciph label{font-size:20px;gap:6px}.ciph .inp{width:58px;font-size:20px}
+ .word span{width:46px;height:54px;font-size:28px}
+ .view.tool{padding-bottom:56px}
+ .more{margin-top:40px}
+ .minitiles a{grid-template-columns:10px 7.2em 1fr;padding:10px 12px;font-size:16px}
+}
 </style>
 </head>
 <body>
@@ -736,7 +763,7 @@ footer .tl a{color:#cfc8b8}
 </footer>
 
 <script src="mathcore.js?v=0f1c917d"></script>
-<script src="app.js?v=dcb615b1"></script>
-<script src="tools.js?v=490d2bd1"></script>
+<script src="app.js?v=ac1a7bf7"></script>
+<script src="tools.js?v=b12fd5e6"></script>
 </body>
 </html>
