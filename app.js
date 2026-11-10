@@ -147,33 +147,7 @@ var Snd=(function(){var ac=null,on=false,master,amb=null,cur=null;
  function noise(sec){var b=ac.createBuffer(1,ac.sampleRate*sec,ac.sampleRate),d=b.getChannelData(0),last=0;for(var i=0;i<d.length;i++){var w=Math.random()*2-1;last=(last+.02*w)/1.02;d[i]=last*3.5}return b}
  function white(sec){var b=ac.createBuffer(1,ac.sampleRate*sec,ac.sampleRate),d=b.getChannelData(0);for(var i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b}
  function loop(buf){var s=ac.createBufferSource();s.buffer=buf;s.loop=true;s.start();return s}
- var SB=null,SBw=[];function seaBuf(cb){if(SB!==null)return cb(SB);SBw.push(cb);if(SBw.length>1)return;
-  fetch('snd/sea.mp3').then(function(r){if(!r.ok)throw 0;return r.arrayBuffer()}).then(function(a){return new Promise(function(ok,no){var p=ac.decodeAudioData(a,ok,no);if(p&&p.then)p.then(ok,no)})})
-   .then(function(b){SB=b},function(){SB=false}).then(function(){var w=SBw;SBw=[];w.forEach(function(f){f(SB)})})}
- function synthSea(g,nodes){/* запасной вариант, если файл не загрузился: спокойный синтезированный берег */
-     var bB=noise(8),bW=white(4);
-     var bed=loop(bB),bl=ac.createBiquadFilter();bl.type='lowpass';bl.frequency.value=420;bl.Q.value=.3;var bh=ac.createBiquadFilter();bh.type='highpass';bh.frequency.value=170;
-     var bg=ac.createGain();bg.gain.value=.2;bed.connect(bl);bl.connect(bh);bh.connect(bg);bg.connect(g);nodes.push(bed);
-     var wt=null,N=96,live=true;
-     function env(n,T,up,shape){var a=new Float32Array(n);for(var i=0;i<n;i++){var x=i/(n-1)*T;a[i]=x<up?.5-.5*Math.cos(Math.PI*x/up):Math.pow(.5+.5*Math.cos(Math.PI*Math.min(1,(x-up)/(T-up))),shape)}return a}
-     (function wave(){if(!live)return;var t=ac.currentTime+.05,up=2.6+Math.random()*1.4,dn=4.5+Math.random()*2.5,T=up+dn,pk=.75+Math.random()*.4,top=700+Math.random()*500;
-       var src=ac.createBufferSource();src.buffer=bB;src.loop=true;src.start(t,Math.random()*7);src.stop(t+T+.2);
-       var lp=ac.createBiquadFilter();lp.type='lowpass';lp.Q.value=.3;var hp=ac.createBiquadFilter();hp.type='highpass';hp.frequency.value=180;
-       var e=ac.createGain();e.gain.value=0;var pn=ac.createStereoPanner?ac.createStereoPanner():null,out=pn||g;if(pn){pn.pan.value=Math.random()*.7-.35;pn.connect(g)}
-       src.connect(hp);hp.connect(lp);lp.connect(e);e.connect(out);
-       var ge=env(N,T,up,1.7),fe=new Float32Array(N);for(var i=0;i<N;i++)fe[i]=300+top*ge[i];for(i=0;i<N;i++)ge[i]*=pk;
-       e.gain.setValueCurveAtTime(ge,t,T);lp.frequency.setValueCurveAtTime(fe,t,T);
-       var h0=t+up*.85,hT=dn*.95,hs=ac.createBufferSource();hs.buffer=bW;hs.loop=true;hs.start(h0,Math.random()*3);hs.stop(h0+hT+.2);
-       var bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1700+Math.random()*700;bp.Q.value=.6;var he=ac.createGain();he.gain.value=0;
-       hs.connect(bp);bp.connect(he);he.connect(out);var hv=env(N,hT,.9,2.2);for(i=0;i<N;i++)hv[i]*=.03*pk;he.gain.setValueCurveAtTime(hv,h0,hT);
-       wt=setTimeout(wave,(T*.72+Math.random()*1.2)*1000)})();
-     return function(){live=false;clearTimeout(wt)}}
  function build(kind){var g=ac.createGain();g.gain.value=0;g.connect(master);var nodes=[g],timer=null,kill=null;
-  if(kind==='sea'){/* спокойный берег: запись волн (snd/sea.mp3, петля 90 с со склейкой 3 с; громкость подобрана под другие разделы, ≈ −32 LUFS на выходе).
-       Файл грузится только когда включён звук на странице с морем; если не загрузился — синтезированный вариант */
-    var sg=ac.createGain();sg.gain.value=.74;/* 10.11: вдвое тише по просьбе владельца (−6 дБ) */sg.connect(g);var live=true,sk=null;
-    seaBuf(function(buf){if(!live)return;if(!buf){sk=synthSea(g,nodes);return}var src=ac.createBufferSource();src.buffer=buf;src.loop=true;src.loopStart=.5;src.loopEnd=90.5;src.connect(sg);src.start(0,.5+Math.random()*80);nodes.push(src)});
-    kill=function(){live=false;sk&&sk()}}
   /* спокойная музыка: как на главной (редкие мягкие ноты), у каждой книги свой лад, тембр и темп */
   var M=MUS[kind];if(M){var out=g;
     if(M.echo){var dl=ac.createDelay(2),fb=ac.createGain(),wet=ac.createGain();dl.delayTime.value=M.echo;fb.gain.value=.35;wet.gain.value=.5;g.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(wet);wet.connect(master);nodes.push(dl,fb,wet)}
@@ -181,12 +155,13 @@ var Snd=(function(){var ac=null,on=false,master,amb=null,cur=null;
     timer=setInterval(function(){if(!on)return;k++;if(M.rest&&Math.random()<M.rest)return;
       if(M.walk){i0=clamp(i0+[-2,-1,-1,1,1,2][Math.floor(Math.random()*6)],0,M.n.length-1)}else if(M.pat){i0=M.pat[k%M.pat.length]}else i0=Math.floor(Math.random()*M.n.length);
       note(M.n[i0],M.dur,M.vol,out,M.trem);
+      if(M.wave&&k%M.wave===0){var w0=Math.floor(Math.random()*3);[0,1,2,3,4,3,2].forEach(function(d,j){setTimeout(function(){note(M.n[w0+d],1.2,M.vol*.45,out)},j*170)})}
       if(M.bass&&k%M.bass===0)note(M.b[Math.floor(Math.random()*M.b.length)],M.dur*1.8,M.vol*.8,out);
       if(M.two&&Math.random()<M.two)setTimeout(function(){note(M.n[Math.min(i0+2,M.n.length-1)],M.dur,M.vol*.6,out,M.trem)},M.iv*.5)},M.iv)}
   g.gain.setTargetAtTime(1,ac.currentTime,.8);return {g:g,nodes:nodes,timer:timer,kill:kill}}
  var MUS={/* n — ноты лада, iv — шаг, мс; dur — затухание, с; vol — громкость (главная: .06) */
   home:{n:[196,220,261.63,293.66,329.63,392],iv:1400,dur:1.6,vol:.06},
-  sea:{n:[196,220,246.94,293.66,329.63,392,440],iv:1900,dur:2.2,vol:.045,walk:1,rest:.15},/* книга 1: соль мажор, медленно, как волны, — поверх тихого моря */
+  sea:{n:[196,220,246.94,293.66,329.63,392,440,493.88],iv:1700,dur:2.2,vol:.055,walk:1,rest:.1,wave:9},/* книга 1: соль мажор, мелодия плавно ходит вверх-вниз, раз в ~9 шагов — «волна»: тихий пробег нот вверх и обратно (с 10.11 вместо записи моря) */
   noir:{n:[220,261.63,293.66,329.63,349.23,392,440],b:[110,82.41,98],iv:1800,dur:2,vol:.07,walk:1,rest:.3,bass:4,trem:4.5},/* книга 2: ля минор, «вибрафон» с дрожанием, редкий бас, паузы — сыщицкий джаз */
   space:{n:[261.63,293.66,329.63,369.99,392,440,493.88,523.25],iv:1700,dur:2.8,vol:.045,walk:1,rest:.2,echo:.42,two:.2},/* книга 3: лидийский до, долгие ноты с эхом — космос */
   clock:{n:[261.63,293.66,329.63,392,440,523.25],iv:1100,dur:1.4,vol:.05,pat:[0,2,4,3,1,3,5,4,2,4,3,1]}/* «Логика»: музыкальная шкатулка, ровный ход, как часы */
@@ -391,6 +366,16 @@ function recommend(){var best=null,sc=-1;BOOKS.forEach(function(b){var s=0;if(se
 /* ================== ИСТОРИЯ КНИГИ ================== */
 function words(t,d){return t.split(' ').map(function(w,i){return '<span class="w"><span style="animation-delay:'+((d||200)+i*120)+'ms">'+w+'</span></span>'}).join(' ')}
 var storyScroll=[];
+/* «Полистать книгу» (10.11): настоящие страницы книг 1–3 — по ответу поддержки Литрес можно до 25 % книги со ссылкой на покупку; здесь 4 страницы из ~90 */
+var LEAF={archipelago:['b1',[5,9,10,19]],bureau:['b2',[4,7,11,15]],borey:['b3',[5,9,12,15]]};
+function leafHTML(b){var L=LEAF[b.id];if(!L)return '';return '<div class="wrap leaf"><div class="eyebrow">Полистать книгу</div><div class="leafs">'+L[1].map(function(n,i){return '<button class="pg" data-i="'+i+'" aria-label="Страница '+n+' — открыть"><img src="img/pg/'+L[0]+'-'+(i+1)+'.webp" alt="Страница '+n+' книги «'+b.short+'»" loading="lazy" width="900" height="1273"><span>стр. '+n+'</span></button>'}).join('')+'</div><p class="leafnote">Четыре страницы из книги. Целиком — на Литрес.</p></div>'}
+function leafBind(v,b){var L=LEAF[b.id];if(!L)return;$$('.leafs .pg',v).forEach(function(bt){bt.addEventListener('click',function(){leafOpen(b,+bt.dataset.i)})})}
+function leafOpen(b,i){var L=LEAF[b.id],n=L[1].length,box=el('<div class="lbox" role="dialog" aria-modal="true" aria-label="Страницы книги" style="--c:'+b.c+'"><div class="lin"><img alt=""><div class="lbar"><button class="lp" aria-label="Предыдущая">←</button><span class="lno"></span><button class="ln" aria-label="Следующая">→</button><a class="buy" href="'+b.url+'">Купить на Литрес →</a><button class="lx" aria-label="Закрыть">✕</button></div></div></div>');
+ function show(){$('img',box).src='img/pg/'+L[0]+'-'+(i+1)+'.webp';$('img',box).alt='Страница '+L[1][i]+' книги «'+b.short+'»';$('.lno',box).textContent='стр. '+L[1][i]+' · '+(i+1)+' из '+n}
+ function close(){box.remove();removeEventListener('keydown',key);document.body.style.overflow=''}
+ function key(e){if(e.key==='Escape')close();if(e.key==='ArrowRight'){i=(i+1)%n;show()}if(e.key==='ArrowLeft'){i=(i+n-1)%n;show()}}
+ $('.lp',box).onclick=function(){i=(i+n-1)%n;show()};$('.ln',box).onclick=function(){i=(i+1)%n;show()};$('.lx',box).onclick=close;box.addEventListener('click',function(e){if(e.target===box)close()});
+ addEventListener('keydown',key);document.body.style.overflow='hidden';document.body.appendChild(box);show();$('.lx',box).focus()}
 function renderStory(b){var v=$('#v-story');v.innerHTML='';storyScroll=[];v.style.setProperty('--c',b.c);
  b.chapters.forEach(function(ch,ci){var sec=el('<section class="ch '+(ch.kind==='scroll'?'scroll':'')+'"></section>');
   var color=/^bg\//.test(ch.scene);
@@ -406,7 +391,8 @@ function renderStory(b){var v=$('#v-story');v.innerHTML='';storyScroll=[];v.styl
   if(ch.kind==='game'){GAMES[ch.game](st,stage,b);if(matchMedia('(max-width:760px)').matches){$$('.panel',st).forEach(function(pn){pn.classList.add('flow');sec.appendChild(pn)});sec.classList.add('flowsec')}}
  });
  var i=BOOKS.indexOf(b),nx=BOOKS[(i+1)%BOOKS.length];
- v.appendChild(el('<section class="finale" style="--c:'+b.c+'"><div class="wrap"><div class="book3d"><img src="'+IMG(b.cover)+'" alt="Обложка: '+b.title+'" width="700" height="990"></div><div><div class="eyebrow">Продолжение — в книге</div><h2 style="font-size:clamp(44px,6vw,92px);text-transform:uppercase;margin-top:12px">'+b.short+'</h2><ul class="facts">'+b.facts.map(function(f){return '<li>'+f+'</li>'}).join('')+'</ul><a class="buy" href="'+b.url+'">Открыть на Литрес →</a></div></div></section>'));
+ v.appendChild(el('<section class="finale" style="--c:'+b.c+'"><div class="wrap"><div class="book3d"><img src="'+IMG(b.cover)+'" alt="Обложка: '+b.title+'" width="700" height="990"></div><div><div class="eyebrow">Продолжение — в книге</div><h2 style="font-size:clamp(44px,6vw,92px);text-transform:uppercase;margin-top:12px">'+b.short+'</h2><ul class="facts">'+b.facts.map(function(f){return '<li>'+f+'</li>'}).join('')+'</ul><a class="buy" href="'+b.url+'">Открыть на Литрес →</a></div></div>'+leafHTML(b)+'</section>'));
+ leafBind(v,b);
  v.appendChild(el('<a class="nextstory" href="#story-'+nx.id+'" style="--nc:'+nx.c+'"><div class="wrap"><div><div class="eyebrow" style="color:#bbb">Следующая история</div><h2>'+nx.short+'</h2></div>'+(nx.pop?'<img class="stk" src="'+POSE(nx.pop)+'" alt="">':'<img src="'+IMG(nx.cover)+'" alt="" style="height:200px;border:2px solid #000">')+'</div></a>'));
 }
 function scrollStory(){if(!storyScroll.length)return;var vh=innerHeight,small=innerWidth<761||vh<521;

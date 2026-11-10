@@ -656,6 +656,19 @@ footer .tl a{color:#cfc8b8}
  .more{margin-top:40px}
  .minitiles a{grid-template-columns:10px 7.2em 1fr;padding:10px 12px;font-size:16px}
 }
+.finale .wrap.leaf{display:block;margin-top:60px}.leafs{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:14px}
+.leafs .pg{padding:0;border:2px solid #000;background:#fff;cursor:zoom-in;position:relative;box-shadow:6px 6px 0 color-mix(in srgb,var(--c) 42%,var(--paper));transition:transform .15s}
+.leafs .pg:hover{transform:translate(-2px,-2px)}.leafs .pg img{display:block;width:100%;height:auto}
+.leafs .pg span{position:absolute;left:6px;bottom:6px;background:#000;color:#fff;font:600 12px/1 Inter,sans-serif;padding:4px 6px}
+.leafnote{margin-top:12px;font-size:15px;opacity:.75}
+.lbox{position:fixed;inset:0;z-index:200;background:rgba(10,8,6,.88);display:flex;align-items:center;justify-content:center;padding:12px}
+.lin{display:flex;flex-direction:column;align-items:center;gap:10px;max-height:100%;max-width:100%}
+.lin img{max-height:calc(100svh - 90px);max-width:100%;width:auto;background:#fff;border:2px solid #000}
+.lbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;color:#fff;font:600 14px/1 Inter,sans-serif}
+.lbar button{background:#fff;color:#000;border:2px solid #000;font:700 16px/1 Inter,sans-serif;padding:8px 12px;cursor:pointer}
+.lbar .buy{margin:0;padding:9px 14px;font-size:15px}
+@media (max-width:760px){.leafs{grid-template-columns:repeat(2,1fr);gap:12px}.lin img{max-height:calc(100svh - 120px)}}
+@media print{.leaf{display:none}}
 </style>
 </head>
 <body>
@@ -763,7 +776,7 @@ footer .tl a{color:#cfc8b8}
 </footer>
 
 <script src="mathcore.js?v=0f1c917d"></script>
-<script src="app.js?v=a15fe8d0"></script>
+<script src="app.js?v=41975177"></script>
 <script src="tools.js?v=b12fd5e6"></script>
 </body>
 </html>
