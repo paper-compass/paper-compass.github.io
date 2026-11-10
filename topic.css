@@ -304,3 +304,69 @@ footer.site small{grid-column:1/-1;color:#9b988f;border-top:1px solid #333;paddi
 .buddy .bd:focus-visible{outline:none}.buddy .bd:focus-visible .tag{outline:3px solid #1f5fb8;outline-offset:2px}
 @media (max-width:640px){.buddy{width:140px;height:190px}.buddy .bd{width:78px;right:4px;bottom:calc(10px + env(safe-area-inset-bottom,0px))}.buddy.l .bd{left:4px}.buddy .tag{font-size:9px;padding:3px 5px 2px;margin-top:-4px;border-width:1.5px}}
 @media print{.buddy{display:none!important}}
+
+/* ===== 10.11: страницы тем в стиле главной ===== */
+body{font-size:17px}
+.top{background:#16130f;color:#f2ede2;border-bottom:2.5px solid #111}
+.top nav a{font-size:13px}
+.mnav summary{border-color:#f2ede2}
+.mnav div{color:#111}
+.hero .wrap{min-height:560px}
+.hero .txt{padding-bottom:70px}
+.figs img{height:min(460px,44vw)}.figs img+img{height:min(380px,37vw)}
+.sec{padding-top:96px}
+.sec h2{font-size:clamp(40px,5.6vw,80px);margin:10px 0 26px}
+.sec .eyebrow{font-size:13px}
+/* советы и ошибки — карточки с цветной кромкой и подложкой */
+.cards{gap:22px;margin-top:26px}
+.card{border:2.5px solid #111;border-top:8px solid var(--c);box-shadow:7px 7px 0 color-mix(in srgb,var(--c) 30%,var(--paper));padding:22px 22px 18px;font-size:16px;line-height:1.5}
+.card h3{font-size:clamp(24px,2.2vw,30px);margin-bottom:12px}
+.tcols div{border-width:2.5px;box-shadow:5px 5px 0 color-mix(in srgb,var(--c) 30%,var(--paper))}
+.mtable{box-shadow:8px 8px 0 color-mix(in srgb,var(--c) 30%,var(--paper))}
+/* тренажёры — тёмная полоса и цветные плитки, как на главной */
+.sec:has(.tiles){background:#16130f;color:#f2ede2;padding:100px 0;margin-top:96px;border-top:2.5px solid #111;border-bottom:2.5px solid #111}
+.sec:has(.tiles) .eyebrow{color:color-mix(in srgb,var(--c) 55%,#fff)}
+.sec:has(.tiles)+.sec{padding-top:96px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:24px;margin-top:30px}
+.tile{position:relative;display:block;text-decoration:none;background:var(--c);color:#fff;border:2.5px solid #111;box-shadow:8px 8px 0 color-mix(in srgb,var(--c) 55%,#16130f),0 0 0 2px rgba(255,255,255,.08);min-height:270px;padding:20px;overflow:hidden;isolation:isolate;transition:transform .2s,box-shadow .2s}
+.tile::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 80% 90%,rgba(255,255,255,.28),transparent 55%),repeating-linear-gradient(-45deg,rgba(0,0,0,.06) 0 2px,transparent 2px 12px)}
+.tile:hover{transform:translate(-3px,-3px);box-shadow:11px 11px 0 color-mix(in srgb,var(--c) 55%,#16130f),0 0 0 2px rgba(255,255,255,.08)}
+.tile small{font:800 12px var(--body);letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.tile h3{font-size:clamp(28px,2.6vw,36px);text-transform:uppercase;max-width:64%;margin:8px 0;text-shadow:0 2px 0 rgba(0,0,0,.18)}
+.tile p{max-width:56%;margin:0;font-weight:600;font-size:15px;line-height:1.35;opacity:.92}
+.tile>img{position:absolute;right:10px;bottom:6px;height:66%;width:auto;max-width:44%;object-fit:contain;object-position:100% 100%;z-index:-1;transform-origin:100% 100%;transition:transform .5s cubic-bezier(.2,1.5,.3,1);filter:drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)}
+.tile:hover>img{transform:translateY(-3%) rotate(-2deg) scale(1.04)}
+.tile .tstar{position:absolute;right:6%;bottom:14%;width:40%;z-index:-1;opacity:.95}
+.tile .tstar svg{width:100%;height:auto;display:block}
+.tile .go{position:absolute;left:20px;bottom:18px;font:800 13px var(--body);background:#111;color:#fff;padding:6px 10px}
+@media (max-width:640px){.tile p{max-width:60%}.sec:has(.tiles){padding:70px 0}}
+/* книга — большая обложка и страницы */
+.book{grid-template-columns:minmax(200px,300px) minmax(0,1fr);gap:clamp(26px,5vw,60px);padding:clamp(24px,4vw,46px);background:#16130f;box-shadow:10px 10px 0 color-mix(in srgb,var(--bc,var(--c)) 55%,var(--paper))}
+.book .cov{perspective:1200px}
+.book .cov img{transform:rotateY(-14deg) rotate(-2deg);transform-origin:30% 50%;border:none;box-shadow:-10px 18px 40px -8px rgba(0,0,0,.7),inset 0 0 0 1px rgba(0,0,0,.2);transition:transform .4s}
+.book:hover .cov img{transform:rotateY(-4deg) rotate(0)}
+.book .btn{font-size:17px;padding:13px 20px}
+.book .leaf{grid-column:1/-1;border-top:1.5px solid #3a352d;padding-top:26px}
+.book .leaf .eyebrow{color:color-mix(in srgb,var(--bc,var(--c)) 60%,#fff)}
+.leafs{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:14px}
+.leafs .pg{position:relative;display:block;border:2px solid #000;background:#fff;cursor:zoom-in;transition:transform .15s}
+.leafs .pg:hover{transform:translate(-2px,-2px)}
+.leafs .pg img{width:100%;height:auto;box-shadow:none;border:0}
+.leafs .pg span{position:absolute;left:6px;bottom:6px;background:#000;color:#fff;font:600 12px/1 var(--body);padding:4px 6px}
+.leafnote{font-size:14px;opacity:.7;margin:12px 0 0}
+@media (max-width:760px){.book{grid-template-columns:1fr}.book .cov{max-width:220px}.leafs{grid-template-columns:repeat(2,1fr)}}
+.lbox{position:fixed;inset:0;z-index:200;background:rgba(10,8,6,.9);display:flex;align-items:center;justify-content:center;padding:12px}
+.lin{display:flex;flex-direction:column;align-items:center;gap:10px;max-height:100%;max-width:100%}
+.lin img{max-height:calc(100svh - 90px);max-width:100%;width:auto;background:#fff;border:2px solid #000}
+.lbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;color:#fff;font:600 14px/1 var(--body)}
+.lbar button{background:#fff;color:#000;border:2px solid #000;font:700 16px/1 var(--body);padding:8px 12px;cursor:pointer}
+.lbar .btn{font-size:15px;padding:9px 14px;background:var(--bc,var(--c));border-color:#fff}
+/* другие темы — как плашки тем на главной */
+.related{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.related a{border:2.5px solid #111;border-top:6px solid var(--c);background:#fffdf6;padding:14px 16px 16px;font-size:22px;box-shadow:6px 6px 0 color-mix(in srgb,var(--c) 42%,var(--paper));transition:transform .15s,box-shadow .15s}
+.related a small{font:800 11px/1.3 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.related a span{display:block;font:800 13px var(--body);text-transform:none;margin-top:10px}
+.related a:hover{background:#fffdf6;color:#111;transform:translate(-2px,-2px);box-shadow:8px 8px 0 color-mix(in srgb,var(--c) 42%,var(--paper))}
+.related a:hover small{color:var(--muted)}
+@media print{.tiles,.leaf,.lbox{display:none!important}}
+@media (max-width:640px){.book{grid-template-columns:110px minmax(0,1fr);gap:16px;padding:18px}.book .cov{max-width:none}.book .cov img{transform:none}.book .leaf{grid-column:1/-1;padding-top:18px}}

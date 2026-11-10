@@ -92,3 +92,16 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 return {sheetHTML:sheetHTML};
 })();
 if(typeof module!=='undefined')module.exports=Topic;
+
+/* «Полистать книгу» (10.11): просмотр страниц книги со ссылкой на покупку */
+(function(){if(typeof document==='undefined')return;
+ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('.leafs .pg');if(!a)return;e.preventDefault();
+  var book=a.closest('.book'),list=[].slice.call(book.querySelectorAll('.leafs .pg')),i=list.indexOf(a),n=list.length,url=book.getAttribute('data-url');
+  var box=document.createElement('div');box.className='lbox';box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.style.cssText=book.getAttribute('style')||'';
+  box.innerHTML='<div class="lin"><img alt=""><div class="lbar"><button class="lp" aria-label="Предыдущая">←</button><span class="lno"></span><button class="ln" aria-label="Следующая">→</button><a class="btn" data-goal="litres" href="'+url+'">Купить на Литрес →</a><button class="lx" aria-label="Закрыть">✕</button></div></div>';
+  var img=box.querySelector('img');
+  function show(){var p=list[i];img.src=p.getAttribute('href');img.alt=p.querySelector('img').alt;box.querySelector('.lno').textContent=p.querySelector('span').textContent+' · '+(i+1)+' из '+n}
+  function close(){box.remove();removeEventListener('keydown',key);document.body.style.overflow=''}
+  function key(e){if(e.key==='Escape')close();if(e.key==='ArrowRight'){i=(i+1)%n;show()}if(e.key==='ArrowLeft'){i=(i+n-1)%n;show()}}
+  box.querySelector('.lp').onclick=function(){i=(i+n-1)%n;show()};box.querySelector('.ln').onclick=function(){i=(i+1)%n;show()};box.querySelector('.lx').onclick=close;
+  box.addEventListener('click',function(ev){if(ev.target===box)close()});addEventListener('keydown',key);document.body.style.overflow='hidden';document.body.appendChild(box);show();box.querySelector('.lx').focus()})})();
