@@ -171,15 +171,29 @@ var Snd=(function(){var ac=null,on=false,master,amb=null,cur=null;
  function build(kind){var g=ac.createGain();g.gain.value=0;g.connect(master);var nodes=[g],timer=null,kill=null;
   if(kind==='sea'){/* спокойный берег: запись волн (snd/sea.mp3, петля 90 с со склейкой 3 с; громкость подобрана под другие разделы, ≈ −32 LUFS на выходе).
        Файл грузится только когда включён звук на странице с морем; если не загрузился — синтезированный вариант */
-    var sg=ac.createGain();sg.gain.value=1.48;sg.connect(g);var live=true,sk=null;
+    var sg=ac.createGain();sg.gain.value=.74;/* 10.11: вдвое тише по просьбе владельца (−6 дБ) */sg.connect(g);var live=true,sk=null;
     seaBuf(function(buf){if(!live)return;if(!buf){sk=synthSea(g,nodes);return}var src=ac.createBufferSource();src.buffer=buf;src.loop=true;src.loopStart=.5;src.loopEnd=90.5;src.connect(sg);src.start(0,.5+Math.random()*80);nodes.push(src)});
     kill=function(){live=false;sk&&sk()}}
-  if(kind==='noir'){var r=loop(white(3)),hf=ac.createBiquadFilter();hf.type='bandpass';hf.frequency.value=3000;hf.Q.value=.6;var rg=ac.createGain();rg.gain.value=.08;r.connect(hf);hf.connect(rg);rg.connect(g);
-    var o=ac.createOscillator();o.type='sawtooth';o.frequency.value=55;var of=ac.createBiquadFilter();of.type='lowpass';of.frequency.value=180;var og=ac.createGain();og.gain.value=.12;o.connect(of);of.connect(og);og.connect(g);o.start();nodes.push(r,o)}
-  if(kind==='space'){[48,48.4,72.2].forEach(function(fq){var o=ac.createOscillator();o.frequency.value=fq;var og=ac.createGain();og.gain.value=.12;o.connect(og);og.connect(g);o.start();nodes.push(o)});
-    timer=setInterval(function(){if(!on)return;blip(1320,.05,.03)},4200)}
-  if(kind==='clock'||kind==='home'){var notes=[392,440,523.25,587.33,659.25,783.99];timer=setInterval(function(){if(!on)return;var n=notes[Math.floor(Math.random()*notes.length)];blip(n*(kind==='clock'?1:.5),1.6,.06)},kind==='clock'?1000:1400)}
+  /* спокойная музыка: как на главной (редкие мягкие ноты), у каждой книги свой лад, тембр и темп */
+  var M=MUS[kind];if(M){var out=g;
+    if(M.echo){var dl=ac.createDelay(2),fb=ac.createGain(),wet=ac.createGain();dl.delayTime.value=M.echo;fb.gain.value=.35;wet.gain.value=.5;g.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(wet);wet.connect(master);nodes.push(dl,fb,wet)}
+    var i0=Math.floor(Math.random()*M.n.length),k=0;
+    timer=setInterval(function(){if(!on)return;k++;if(M.rest&&Math.random()<M.rest)return;
+      if(M.walk){i0=clamp(i0+[-2,-1,-1,1,1,2][Math.floor(Math.random()*6)],0,M.n.length-1)}else if(M.pat){i0=M.pat[k%M.pat.length]}else i0=Math.floor(Math.random()*M.n.length);
+      note(M.n[i0],M.dur,M.vol,out,M.trem);
+      if(M.bass&&k%M.bass===0)note(M.b[Math.floor(Math.random()*M.b.length)],M.dur*1.8,M.vol*.8,out);
+      if(M.two&&Math.random()<M.two)setTimeout(function(){note(M.n[Math.min(i0+2,M.n.length-1)],M.dur,M.vol*.6,out,M.trem)},M.iv*.5)},M.iv)}
   g.gain.setTargetAtTime(1,ac.currentTime,.8);return {g:g,nodes:nodes,timer:timer,kill:kill}}
+ var MUS={/* n — ноты лада, iv — шаг, мс; dur — затухание, с; vol — громкость (главная: .06) */
+  home:{n:[196,220,261.63,293.66,329.63,392],iv:1400,dur:1.6,vol:.06},
+  sea:{n:[196,220,246.94,293.66,329.63,392,440],iv:1900,dur:2.2,vol:.045,walk:1,rest:.15},/* книга 1: соль мажор, медленно, как волны, — поверх тихого моря */
+  noir:{n:[220,261.63,293.66,329.63,349.23,392,440],b:[110,82.41,98],iv:1800,dur:2,vol:.07,walk:1,rest:.3,bass:4,trem:4.5},/* книга 2: ля минор, «вибрафон» с дрожанием, редкий бас, паузы — сыщицкий джаз */
+  space:{n:[261.63,293.66,329.63,369.99,392,440,493.88,523.25],iv:1700,dur:2.8,vol:.045,walk:1,rest:.2,echo:.42,two:.2},/* книга 3: лидийский до, долгие ноты с эхом — космос */
+  clock:{n:[261.63,293.66,329.63,392,440,523.25],iv:1100,dur:1.4,vol:.05,pat:[0,2,4,3,1,3,5,4,2,4,3,1]}/* «Логика»: музыкальная шкатулка, ровный ход, как часы */
+ };
+ function note(f,dur,vol,out,trem){var t=ac.currentTime,o=ac.createOscillator(),e=ac.createGain();o.type='sine';o.frequency.value=f;e.gain.value=0;e.gain.setTargetAtTime(vol,t,.006);e.gain.setTargetAtTime(0,t+.02,dur/4);o.connect(e);
+  if(trem){var l=ac.createOscillator(),lg=ac.createGain(),tg=ac.createGain();l.frequency.value=trem;lg.gain.value=.25;tg.gain.value=.75;l.connect(lg);lg.connect(tg.gain);e.connect(tg);tg.connect(out);l.start(t);l.stop(t+dur+.2)}else e.connect(out);
+  o.start(t);o.stop(t+dur+.2)}
  function blip(f,dur,vol){if(!ac||!on)return;var o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.value=f;g.gain.value=0;g.gain.setTargetAtTime(vol,ac.currentTime,.005);g.gain.setTargetAtTime(0,ac.currentTime+.02,dur/4);o.connect(g);g.connect(master);o.start();o.stop(ac.currentTime+dur+.2)}
  function stopAmb(){if(!amb)return;var a=amb;a.g.gain.setTargetAtTime(0,ac.currentTime,.3);clearInterval(a.timer);a.kill&&a.kill();setTimeout(function(){a.nodes.forEach(function(n){try{n.stop&&n.stop();n.disconnect()}catch(e){}})},1500);amb=null}
  return {toggle:function(){if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=.35;master.connect(ac.destination)}catch(e){return false}}
